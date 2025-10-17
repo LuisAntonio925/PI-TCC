@@ -7,16 +7,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>#{get 'title' /} - RestApp</title>
-    </head>
-<body>
-    <header class="header">
+</head>
+<body class="list-page">
+    <header class="header list-header">
         <h1>#{get 'title' /}</h1>
         <p class="slogan">Gerencie os dados do cliente e seus restaurantes vinculados.</p>
     </header>
 
-    <div class="separator"></div>
+    <div class="separator list-separator"></div>
 
-    <main>
+    <main class="list-main">
         <div class="form-card">
             <h2>Dados do Cliente</h2>
             <form action="@{Gerenciamentos.salvar()}" method="POST">
@@ -42,7 +42,7 @@
                     <label for="iSenha">Senha:</label>
                     <input type="password" id="iSenha" name="cli.senha" #{if !cli?.id}required#{/if}>
                     #{if cli?.id}
-                        <small style="color: #888;">Deixe em branco para não alterar a senha.</small>
+                        <small class="form-hint">Deixe em branco para não alterar a senha.</small>
                     #{/if}
                 </div>
                 
@@ -51,18 +51,18 @@
         </div>
 
         #{if cli?.id}
-            <hr style="margin: 40px 0; border-top: 1px solid #eee;">
+            <hr class="form-separator">
 
             <div class="form-card">
                 <h2>Restaurantes Vinculados</h2>
                 
                 #{if cli.restaurantes.size() > 0}
-                    <table style="width:100%; text-align: left; border-collapse: collapse;">
+                    <table class="linked-items-table">
                         #{list items:cli.restaurantes, as:'r'}
-                            <tr style="border-bottom: 1px solid #eee;">
-                                <td style="padding: 8px;">${r.nomeDoRestaurante}</td>
-                                <td style="text-align: right; padding: 8px;">
-                                    <a href="@{Gerenciamentos.removerRestaurante(idCli: cli.id, idRest: r.id)}" style="color: #dc3545;">Remover Vínculo</a>
+                            <tr class="linked-item-row">
+                                <td class="linked-item-name">${r.nomeDoRestaurante}</td>
+                                <td class="linked-item-actions">
+                                    <a href="@{Gerenciamentos.removerRestaurante(idCli: cli.id, idRest: r.id)}" class="remove-link">Remover Vínculo</a>
                                 </td>
                             </tr>
                         #{/list}
@@ -73,7 +73,7 @@
                 #{/else}
             </div>
 
-            <div class="form-card" style="margin-top: 20px;">
+            <div class="form-card form-card-secondary">
                 <h3>Vincular novo restaurante</h3>
                 
                 <form action="@{Gerenciamentos.salvar()}" method="POST">
@@ -81,7 +81,7 @@
 
                     <div class="form-group">
                         <label for="restauranteSelect">Selecione um restaurante:</label>
-                        <select name="idRestaurante" id="restauranteSelect" style="width:100%; padding: 10px;">
+                        <select name="idRestaurante" id="restauranteSelect" class="form-select">
                             <option value="">Selecione...</option>
                             #{list items:restaurantesDisponiveis, as:'rest'}
                                 <option value="${rest.id}">${rest.nomeDoRestaurante}</option>

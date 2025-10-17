@@ -1,4 +1,3 @@
-
 .verde{
 	color:white;
 	background-color:green;
@@ -9,529 +8,1010 @@
 	background-color:red;
 }
 
+/*
+|==========================================================================
+| 0. VARIÁVEIS DE TEMA E BASE
+|==========================================================================
+*/
+:root { /*css da pagina principal e geral*/
+    --primary-color: #A34E2B; /* Marrom aconchegante para destaque */
+    --secondary-color: #D4A373; /* Bege claro para tons quentes */
+    --tertiary-color: #8C6A5A; /* Marrom médio para profundidade (Usado para texto) */
+    --background-light: #F8F8F8; /* Fundo claro e neutro */
+    --text-dark: #333333; /* Texto escuro padrão */
+    --text-light: #FFFFFF; /* Texto claro */
+    --button-hover: #8F3E22; /* Cor do botão ao passar o mouse */
+    --line-color: #E0D3C7; /* Cor da linha decorativa */
+    --gradient-start: #FCF7EE; /* Um pêssego muito claro, quase creme */
+    --gradient-end: #F5E8D8;   /* Um bege suave e quente */
+    --error-color: #dc3545; /* Cor para botões de remoção */
+    --success-color: #28a745; /* Cor para botões de edição/favoritos */
+    --favoritar-star: #FFD700; /* Estrela amarela/dourada */
+}
 
-:root { /*css da pagina principal*/
-            --primary-color: #A34E2B; /* Marrom aconchegante para destaque */
-            --secondary-color: #D4A373; /* Bege claro para tons quentes */
-            --tertiary-color: #8C6A5A; /* Marrom médio para profundidade */
-            --background-light: #F8F8F8; /* Fundo claro e neutro - agora parte do degradê */
-            --text-dark: #333333; /* Texto escuro padrão */
-            --text-light: #FFFFFF; /* Texto claro */
-            --button-hover: #8F3E22; /* Cor do botão ao passar o mouse */
-            --line-color: #E0D3C7; /* Cor da linha decorativa */
-            /* Novas variáveis para o degradê: Cinza muito claro para Creme suave */
-			
-			  
-			    --gradient-start: #FCF7EE; /* Um pêssego muito claro, quase creme */
-			    --gradient-end: #F5E8D8;   /* Um bege suave e quente */
-			
-        }
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end));
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Default para centralizar */
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    color: var(--text-dark);
+    position: relative;
+}
 
-        body {
-            font-family: 'Montserrat', sans-serif;
-            /* Degradê no fundo, substituindo a cor sólida */
-            background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end));
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-            color: var(--text-dark);
-            position: relative;
-        }
+/* Override para páginas com nav fixo (e.g., principal.html) ou listagem */
+body.nav-padding {
+    padding-top: 65px; /* Espaço para nav fixo */
+    justify-content: flex-start;
+}
+body.list-page {
+    justify-content: flex-start; /* Alinha no topo */
+    padding: 40px 20px; /* Padding para listagens/formulários */
+}
 
-        .header {
-            width: 100%;
-            max-width: 1200px;
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px 0;
-        }
 
-        .header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 4em;
-            color: var(--primary-color);
-            margin: 0;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
-            letter-spacing: 1px;
-        }
+.header {
+    width: 100%;
+    max-width: 1200px; /* Padrão */
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px 0;
+}
 
-        .header p.slogan {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1.4em;
-            color: var(--tertiary-color);
-            margin-top: 10px;
-            margin-bottom: 40px;
-            font-weight: 400;
-        }
+/* Overrides para listagem/formulário */
+.header.list-header {
+    max-width: 800px;
+    margin-bottom: 40px; 
+}
+.header.list-header h1 {
+    font-size: 3.8em; 
+}
+.header.list-header p.slogan {
+    font-size: 1.3em;
+    margin-bottom: 10px; 
+}
 
-        .separator {
-            width: 80px;
-            height: 4px;
-            background-color: var(--secondary-color);
-            margin: 0 auto 50px auto;
-            border-radius: 2px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+.header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 4em;
+    color: var(--primary-color);
+    margin: 0;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+    letter-spacing: 1px;
+}
 
-        main { /* Estilo para a tag <main> */
-            width: 100%;
-            max-width: 1200px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+.header p.slogan {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.4em;
+    color: var(--tertiary-color);
+    margin-top: 10px;
+    margin-bottom: 40px;
+    font-weight: 400;
+}
 
-        .container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
-            max-width: 1200px;
-            width: 100%;
-            margin-top: 20px;
-        }
+.separator {
+    width: 80px;
+    height: 4px;
+    background-color: var(--secondary-color);
+    margin: 0 auto 50px auto;
+    border-radius: 2px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
-        .card {
-            background-color: var(--text-light); /* O branco dos cards permanece */
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            padding: 35px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            min-height: 320px;
-        }
+/* Override para listagem/formulário */
+.separator.list-separator {
+    width: 70px;
+    margin: 0 auto 50px auto; 
+}
 
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
-        }
+main { 
+    width: 100%;
+    max-width: 1200px; /* Padrão */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background-color: var(--primary-color);
-            transform: translateY(-100%);
-            transition: transform 0.3s ease-out;
-        }
+/* Override para wrapper de listagem/formulário */
+main.list-main {
+    max-width: 800px;
+    background-color: var(--text-light);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    padding: 35px 50px;
+    box-sizing: border-box;
+    text-align: center;
+}
 
-        .card:hover::before {
-            transform: translateY(0);
-        }
+/*
+|==========================================================================
+| 1. DASHBOARD CARD LAYOUT (principal2.html)
+|==========================================================================
+*/
 
-        .card .icon {
-            font-size: 3.5em;
-            color: var(--secondary-color);
-            margin-bottom: 20px;
-            transition: color 0.3s ease;
-        }
+.container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    max-width: 1200px;
+    width: 100%;
+    margin-top: 20px;
+}
 
-        .card:hover .icon {
-            color: var(--primary-color);
-        }
+.card {
+    background-color: var(--text-light);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    padding: 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    min-height: 320px;
+}
 
-        .card h2 {
-            font-family: 'Playfair Display', serif;
-            color: var(--primary-color);
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 2em;
-        }
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
 
-        .card p {
-            color: var(--tertiary-color);
-            font-size: 1.1em;
-            line-height: 1.6;
-            margin-bottom: 30px;
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-        }
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background-color: var(--primary-color);
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-out;
+}
 
-        .card button {
-            background-color: var(--primary-color);
-            color: var(--text-light);
-            border: none;
-            border-radius: 50px;
-            padding: 18px 35px;
-            font-size: 1.2em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 240px;
-            letter-spacing: 0.5px;
-        }
+.card:hover::before {
+    transform: translateY(0);
+}
 
-        .card button:hover {
-            background-color: var(--button-hover);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
+.card .icon {
+    font-size: 3.5em;
+    color: var(--secondary-color);
+    margin-bottom: 20px;
+    transition: color 0.3s ease;
+}
 
-        /* Ajustes para Responsividade */
-        @media (max-width: 1024px) {
-            .header h1 {
-                font-size: 3.5em;
-            }
-            .header p.slogan {
-                font-size: 1.2em;
-            }
-            .container {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 25px;
-            }
-            .card {
-                padding: 30px;
-                min-height: 300px;
-            }
-            .card h2 {
-                font-size: 1.8em;
-            }
-            .card p {
-                font-size: 1em;
-            }
-            .card button {
-                padding: 16px 30px;
-                font-size: 1.1em;
-            }
-            .card .icon {
-                font-size: 3em;
-            }
-        }
+.card:hover .icon {
+    color: var(--primary-color);
+}
 
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2.8em;
-            }
-            .header p.slogan {
-                font-size: 1.1em;
-                margin-bottom: 30px;
-            }
-            .separator {
-                margin-bottom: 40px;
-            }
-            .container {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .card {
-                padding: 25px;
-                min-height: unset;
-            }
-            .card h2 {
-                font-size: 1.6em;
-            }
-            .card p {
-                font-size: 0.95em;
-            }
-            .card button {
-                padding: 14px 25px;
-                font-size: 1em;
-            }
-            .card .icon {
-                font-size: 2.8em;
-                margin-bottom: 15px;
-            }
-        }
+.card h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 2em;
+}
 
-        @media (max-width: 480px) {
-            body {
-                padding: 15px;
-            }
-            .header {
-                margin-bottom: 20px;
-            }
-            .header h1 {
-                font-size: 2.2em;
-            }
-            .header p.slogan {
-                font-size: 1em;
-                margin-bottom: 25px;
-            }
-            .separator {
-                margin-bottom: 30px;
-            }
-            .card {
-                padding: 20px;
-            }
-            .card h2 {
-                font-size: 1.4em;
-            }
-            .card p {
-                font-size: 0.9em;
-                margin-bottom: 20px;
-            }
-            .card button {
-                padding: 12px 20px;
-                font-size: 0.95em;
-            }
-            .card .icon {
-                font-size: 2.5em;
-            }
-        }
-		
-		
-		
-		/*css do form*/
-		
-        .form-card {
-            background-color: var(--text-light);
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            padding: 35px 50px; /* Mais padding horizontal, menos vertical */
-            width: 100%;
-            max-width: 600px; /* Aumenta a largura máxima */
-            box-sizing: border-box;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            /* Removendo min-height para deixar o formulário "menos comprido" */
-            /* min-height: 320px; */
-        }
+.card p {
+    color: var(--tertiary-color);
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
 
-        .form-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background-color: var(--primary-color);
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-        }
+.card a {
+    text-decoration: none;
+    width: 100%;
+}
 
-        .form-card h2 {
-            font-family: 'Playfair Display', serif;
-            color: var(--primary-color);
-            margin-top: 10px;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-        }
+.card button {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border: none;
+    border-radius: 50px;
+    padding: 18px 35px;
+    font-size: 1.2em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 240px;
+    letter-spacing: 0.5px;
+}
 
-        .form-group {
-            margin-bottom: 22px; /* Espaço ajustado entre os campos */
-            text-align: left;
-        }
+.card button:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
 
-        .form-group label {
-            display: block;
-            font-size: 1.1em;
-            color: var(--tertiary-color);
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
+/*
+|==========================================================================
+| 2. NAVIGATION/HEADER STYLES (principal.html)
+|==========================================================================
+*/
 
-        .form-group input[type="text"],
-        .form-group input[type="email"],
-        .form-group input[type="password"] {
-            width: 100%;
-            padding: 14px; /* Um pouco menos padding vertical */
-            border: 1px solid var(--line-color);
-            border-radius: 8px;
-            font-size: 1em;
-            color: var(--text-dark);
-            background-color: var(--background-light);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            box-sizing: border-box;
-        }
+.ifood-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 40px; 
+    height: 65px; 
+    background: var(--background-light); 
+    box-shadow: 0 2px 15px rgba(0,0,0,0.05); 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box; 
+    z-index: 1000;
+}
 
-        .form-group input[type="text"]:focus,
-        .form-group input[type="email"]:focus,
-        .form-group input[type="password"]:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(163, 78, 43, 0.2);
-            outline: none;
-        }
+.app-logo {
+    font-family: 'Playfair Display', serif; 
+    font-size: 2em; 
+    font-weight: 700;
+    color: var(--primary-color); 
+    text-decoration: none;
+    letter-spacing: 0.5px;
+}
 
-        .form-card button[type="submit"] {
-            background-color: var(--primary-color);
-            color: var(--text-light);
-            border: none;
-            border-radius: 50px;
-            padding: 16px 35px; /* Um pouco menos padding vertical */
-            font-size: 1.2em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 280px;
-            letter-spacing: 0.5px;
-            margin-top: 25px; /* Mais espaço acima do botão */
-        }
+.action-icons {
+    display: flex;
+    gap: 15px; 
+    align-items: center;
+}
 
-        .form-card button[type="submit"]:hover {
-            background-color: var(--button-hover);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
+.action-icons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--tertiary-color); 
+    transition: color 0.2s;
+    line-height: 1; 
+}
 
-        .action-btn {
-            background-color: var(--primary-color);
-            color: var(--text-light);
-            border: none;
-            border-radius: 8px; /* Slightly less rounded than main buttons */
-            padding: 8px 15px;
-            font-size: 0.9em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            text-decoration: none;
-            display: inline-flex; /* Use flex to align icon and text */
-            align-items: center;
-            justify-content: center;
-            gap: 5px; /* Space between icon and text */
-        }
+.action-icons i {
+    font-size: 1.4em; 
+}
 
-        .action-btn i {
-            font-size: 0.8em; /* Adjust icon size relative to text */
-        }
+.action-icons a:hover {
+    color: var(--primary-color);
+}
 
-        .action-btn.edit-btn {
-            background-color: var(--secondary-color); /* Use secondary for edit */
-        }
+.functions-btn {
+    background-color: var(--primary-color) !important;
+    color: var(--text-light) !important;
+    padding: 8px 15px !important; 
+    border-radius: 25px !important; 
+    font-size: 0.9em;
+    font-weight: 600;
+}
 
-        .action-btn.edit-btn:hover {
-            background-color: #c09068; /* Slightly darker secondary for hover */
-            transform: translateY(-2px);
-        }
+.functions-btn i {
+    margin-right: 5px;
+    font-size: 1.2em;
+}
 
-        .action-btn.remove-btn {
-            background-color: var(--error-color);
-        }
+/* Dropdown */
+.user-container { position: relative; z-index: 1010; }
+.user-dropdown { display: none; position: absolute; top: 100%; right: 0; margin-top: 10px; background: var(--background-light); border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); min-width: 180px; overflow: hidden; border: 1px solid var(--line-color); }
+.user-container.active .user-dropdown { display: block; }
+.user-dropdown a { padding: 12px 18px; display: block; color: var(--tertiary-color); font-weight: 500; font-size: 0.9em; }
+.user-dropdown a:hover { background-color: var(--gradient-start); color: var(--primary-color); }
 
-        .action-btn.remove-btn:hover {
-            background-color: #c82333; /* Slightly darker error for hover */
-            transform: translateY(-2px);
-        }
+/* Main Content Wrapper for principal.html */
+.header-content { 
+    text-align: center;
+}
+.header-content h1 { 
+    font-size: 3.5em; 
+    margin: 0;
+}
+.header-content p.slogan { 
+    font-size: 1.2em;
+}
 
-        .no-restaurants-message {
-            text-align: center;
-            color: var(--tertiary-color);
-            font-size: 1.2em;
-            margin-top: 30px;
-            padding: 20px;
-            border: 1px dashed var(--line-color);
-            border-radius: 10px;
-        }
+.categoria-restaurantes {
+    width: 100%;
+    max-width: 1200px;
+    margin-bottom: 50px;
+}
 
-        .add-new-restaurant-btn {
-            background-color: var(--primary-color);
-            color: var(--text-light);
-            border: none;
-            border-radius: 50px;
-            padding: 16px 35px;
-            font-size: 1.2em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-            margin-top: 40px; /* Space above this button */
-            text-decoration: none;
-            display: inline-block;
-            line-height: 1;
-            width: auto; /* Allow button to size to content */
-            max-width: 280px; /* Consistent max width */
-        }
+.categoria-restaurantes h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2em;
+    color: var(--tertiary-color);
+    margin-bottom: 25px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--line-color);
+    display: flex; 
+    align-items: center;
+}
 
-        .add-new-restaurant-btn:hover {
-            background-color: var(--button-hover);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
+.lista-de-cards {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 20px; 
+    justify-content: flex-start;
+}
 
-        /* Responsividade para o formulário */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 3em;
-            }
-            .header p.slogan {
-                font-size: 1.1em;
-                margin-bottom: 20px;
-            }
-            .separator {
-                margin-bottom: 30px;
-            }
-            .form-card {
-                padding: 30px 40px; /* Ajusta padding */
-                max-width: 90%;
-            }
-            .form-card h2 {
-                font-size: 2em;
-                margin-bottom: 25px;
-            }
-            .form-group {
-                margin-bottom: 20px;
-            }
-            .form-group label {
-                font-size: 1em;
-            }
-            .form-group input {
-                padding: 12px;
-                font-size: 0.95em;
-            }
-            .form-card button[type="submit"] {
-                padding: 15px 30px;
-                font-size: 1.1em;
-                max-width: 250px;
-                margin-top: 20px;
-            }
-        }
+.restaurante-card {
+    width: calc(33.333% - 14px); 
+    min-width: 280px;
+    border-radius: 8px; 
+    overflow: hidden; 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-color: var(--background-light);
+    border: 1px solid var(--line-color);
+}
 
-        @media (max-width: 480px) {
-            body {
-                padding: 15px;
-            }
-            .header h1 {
-                font-size: 2.5em;
-            }
-            .header p.slogan {
-                font-size: 0.9em;
-                margin-bottom: 15px;
-            }
-            .separator {
-                margin-bottom: 25px;
-            }
-            .form-card {
-                padding: 25px 30px; /* Ajusta padding */
-            }
-            .form-card h2 {
-                font-size: 1.8em;
-                margin-bottom: 20px;
-            }
-            .form-group {
-                margin-bottom: 18px;
-            }
-            .form-group input {
-                padding: 10px;
-                font-size: 0.9em;
-            }
-            .form-card button[type="submit"] {
-                padding: 12px 25px;
-                font-size: 1em;
-                max-width: 200px;
-                margin-top: 18px;
-            }
-        }
-        
+.foto-container img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
 
-        
+.info-e-acoes {
+    padding: 15px;
+}
+
+.botoes-acao {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+}
+
+.btn-acessar {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9em;
+    transition: background-color 0.2s;
+}
+.btn-acessar:hover {
+    background-color: var(--button-hover);
+}
+
+.btn-favoritar { 
+    border: 1px solid var(--line-color); 
+    color: var(--secondary-color); 
+    border-radius: 50%; 
+    width: 35px; 
+    height: 35px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    cursor: pointer; 
+    transition: all 0.3s ease;
+}
+
+.btn-favoritar.favorito,
+.btn-favoritar.favorito i {
+    color: var(--favoritar-star) !important;
+    border-color: var(--favoritar-star) !important;
+}
+
+.btn-favoritar i {
+   transition: color 0.3s ease; 
+}
+
+.card-cadastro { 
+    width: 100%; 
+    max-width: 1200px; 
+    text-align: center; 
+    padding: 30px; 
+    margin: 40px 0 60px 0; 
+    border: 2px dashed var(--primary-color); 
+    border-radius: 10px; 
+    background-color: #fffaf0; 
+}
+
+.btn-cadastrar-restaurante { 
+    background-color: var(--primary-color); 
+    color: var(--text-light); 
+    padding: 12px 25px; 
+    border-radius: 50px; 
+    text-decoration: none; 
+    font-weight: bold; 
+    display: inline-block; 
+    transition: background-color 0.2s; 
+    box-shadow: 0 4px 10px rgba(163, 78, 43, 0.3); 
+}
+.btn-cadastrar-restaurante:hover {
+    background-color: var(--button-hover);
+}
+
+/*
+|==========================================================================
+| 3. LIST PAGE STYLES (listar.html, listar2.html, favoritos/index.html)
+|==========================================================================
+*/
+
+.search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 40px; 
+    align-items: center;
+    width: 100%;
+}
+
+.search-form label {
+    font-size: 1.1em;
+    color: var(--tertiary-color);
+    font-weight: 600;
+}
+
+.search-form input[type="text"] {
+    width: 100%;
+    max-width: 400px;
+    padding: 14px;
+    border: 1px solid var(--line-color);
+    border-radius: 8px;
+    font-size: 1em;
+    color: var(--text-dark);
+    background-color: var(--background-light);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box;
+}
+
+.search-form input[type="text"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(163, 78, 43, 0.2);
+    outline: none;
+}
+
+.search-form input[type="submit"],
+.search-form button[type="submit"] {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border: none;
+    border-radius: 50px;
+    padding: 12px 30px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 180px;
+}
+
+.search-form input[type="submit"]:hover,
+.search-form button[type="submit"]:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+
+.client-list-section,
+.restaurant-list-section {
+    width: 100%;
+    text-align: left;
+}
+
+.client-list-section h2,
+.restaurant-list-section h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--primary-color);
+    font-size: 2.2em;
+    margin-bottom: 25px;
+    border-bottom: 2px solid var(--line-color);
+    padding-bottom: 15px;
+}
+
+.client-item,
+.restaurant-item {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px dashed var(--line-color);
+    font-size: 1.1em;
+    color: var(--text-dark);
+    transition: background-color 0.2s ease;
+}
+
+.client-item:hover,
+.restaurant-item:hover {
+    background-color: var(--background-light);
+    border-radius: 5px;
+}
+
+.client-item:last-child,
+.restaurant-item:last-child {
+    border-bottom: none;
+}
+
+.client-info,
+.restaurant-info {
+    flex-grow: 1;
+    margin-right: 15px; 
+    display: flex;
+    flex-direction: column;
+    gap: 5px; 
+}
+
+.client-info span,
+.restaurant-info span {
+    display: block; 
+    font-size: 1em;
+    color: var(--text-dark);
+}
+
+.client-info span.name,
+.restaurant-info span.name {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 1.1em;
+}
+
+.client-info span.contact,
+.restaurant-info span.details {
+    font-size: 0.95em;
+    color: var(--tertiary-color);
+}
+
+.client-actions,
+.restaurant-actions {
+    display: flex;
+    gap: 10px; 
+    flex-shrink: 0; 
+}
+
+.action-btn {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border: none;
+    border-radius: 8px; 
+    padding: 8px 15px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-decoration: none;
+    display: inline-flex; 
+    align-items: center;
+    justify-content: center;
+    gap: 5px; 
+}
+
+.action-btn i {
+    font-size: 0.8em; 
+}
+
+.action-btn.edit-btn {
+    background-color: var(--secondary-color);
+}
+
+.action-btn.edit-btn:hover {
+    background-color: #c09068; /* Darker secondary for hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Base for removable buttons */
+.action-btn.remove-btn {
+    background-color: var(--error-color);
+}
+
+.action-btn.remove-btn:hover {
+    background-color: #c82333; /* Darker error for hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.no-clients-message,
+.no-restaurants-message {
+    text-align: center;
+    color: var(--tertiary-color);
+    font-size: 1.2em;
+    margin-top: 30px;
+    padding: 20px;
+    border: 1px dashed var(--line-color);
+    border-radius: 10px;
+}
+
+.add-new-client-btn,
+.add-new-restaurant-btn {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border: none;
+    border-radius: 50px;
+    padding: 16px 35px;
+    font-size: 1.2em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 40px; 
+    text-decoration: none;
+    display: inline-block;
+    line-height: 1;
+    width: auto; 
+    max-width: 280px;
+}
+
+.add-new-client-btn:hover,
+.add-new-restaurant-btn:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Favorite/Unfavorite Buttons Specific to Favoritos/index.html */
+.action-btn.favorite-btn { 
+    background-color: var(--success-color);
+}
+.action-btn.favorite-btn:hover {
+    background-color: #1e7e34; /* Darker green on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+.action-btn.unfavorite-btn { 
+    background-color: var(--error-color);
+}
+.action-btn.unfavorite-btn:hover {
+    background-color: #c82333; /* Darker red on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+.favoritos-section { 
+    margin-bottom: 50px; 
+}
+
+
+/*
+|==========================================================================
+| 4. FORM/EDIT CLIENT/RESTAURANT SPECIFIC STYLES
+|==========================================================================
+*/
+
+.form-card {
+    background-color: var(--text-light);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    padding: 35px 50px; 
+    width: 100%;
+    max-width: 600px; 
+    box-sizing: border-box;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.form-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background-color: var(--primary-color);
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.form-card h2,
+.form-card h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--primary-color);
+    margin-top: 10px;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+}
+
+.form-card h3 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 22px; 
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-size: 1.1em;
+    color: var(--tertiary-color);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group select {
+    width: 100%;
+    padding: 14px; 
+    border: 1px solid var(--line-color);
+    border-radius: 8px;
+    font-size: 1em;
+    color: var(--text-dark);
+    background-color: var(--background-light);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
+.form-group select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(163, 78, 43, 0.2);
+    outline: none;
+}
+
+.form-card button[type="submit"],
+.form-card .action-btn {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border: none;
+    border-radius: 50px;
+    padding: 16px 35px;
+    font-size: 1.2em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 280px;
+    letter-spacing: 0.5px;
+    margin-top: 25px;
+    text-decoration: none;
+    display: inline-block;
+    line-height: 1;
+    box-sizing: border-box;
+}
+
+.form-card button[type="submit"]:hover,
+.form-card .action-btn:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.form-hint {
+    display: block;
+    color: #888;
+    font-size: 0.9em;
+    margin-top: 5px;
+    text-align: left;
+}
+
+.form-separator {
+    margin: 40px 0; 
+    border-top: 1px solid var(--line-color);
+}
+
+.form-card-secondary {
+    margin-top: 20px;
+}
+
+.linked-items-table {
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+}
+
+.linked-item-row {
+    border-bottom: 1px solid #eee;
+}
+
+.linked-item-row:last-child {
+    border-bottom: none;
+}
+
+.linked-item-name {
+    padding: 8px;
+    font-size: 1.0em;
+    color: var(--text-dark);
+}
+
+.linked-item-actions {
+    text-align: right; 
+    padding: 8px;
+}
+
+.remove-link {
+    color: #dc3545;
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.remove-link:hover {
+    color: #c82333;
+    text-decoration: underline;
+}
+
+.client-list {
+    margin-top: 30px;
+    text-align: left;
+}
+
+.client-list h3 {
+    font-family: 'Montserrat', sans-serif;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: 1.8em;
+    border-bottom: 2px solid var(--line-color);
+    padding-bottom: 10px;
+}
+
+.client-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--line-color);
+    font-size: 1.1em;
+    color: var(--text-dark);
+}
+
+.client-item:last-child {
+    border-bottom: none;
+}
+
+.client-item .remove-btn {
+    background-color: var(--error-color);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    line-height: 1;
+}
+
+.client-item .remove-btn:hover {
+    background-color: #c82333;
+}
+
+.navigation-buttons {
+    display: flex;
+    flex-direction: column; 
+    gap: 15px; 
+    margin-top: 30px;
+    width: 100%;
+    align-items: center;
+}
+
+.navigation-buttons .action-btn {
+    width: 100%;
+    max-width: 280px; 
+    margin-top: 0; 
+}
+
+
+/*
+|=================================================================================
+| 5. RESPONSIVIDADE GERAL
+|=================================================================================
+*/
+
+@media (max-width: 1024px) {
+    .header h1 { font-size: 3.5em; }
+    .header p.slogan { font-size: 1.2em; }
+    .container { grid-template-columns: repeat(2, 1fr); gap: 25px; }
+    .card { padding: 30px; min-height: 300px; }
+    .card h2 { font-size: 1.8em; }
+    .card p { font-size: 1em; }
+    .card button { padding: 16px 30px; font-size: 1.1em; }
+    .card .icon { font-size: 3em; }
+
+    /* Form & List Responsiveness */
+    .header.list-header h1 { font-size: 3em; }
+    .header.list-header p.slogan { font-size: 1.1em; }
+    .separator.list-separator { margin-bottom: 40px; }
+    main.list-main { padding: 30px 30px; }
+    .search-form input[type="text"] { max-width: 100%; }
+    .search-form input[type="submit"],
+    .search-form button[type="submit"] { padding: 10px 25px; font-size: 1em; }
+    .client-list-section h2,
+    .restaurant-list-section h2 { font-size: 2em; margin-bottom: 20px; }
+    .client-item,
+    .restaurant-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .client-info,
+    .restaurant-info { margin-right: 0; width: 100%; }
+    .client-actions,
+    .restaurant-actions { width: 100%; justify-content: flex-end; }
+    .action-btn { padding: 8px 12px; font-size: 0.85em; }
+    .add-new-client-btn,
+    .add-new-restaurant-btn { padding: 14px 30px; font-size: 1.1em; max-width: 250px; }
+    
+    .form-card { max-width: 90%; }
+    .form-card h2 { font-size: 2em; margin-bottom: 25px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group input, .form-group select { padding: 12px; font-size: 0.95em; }
+    .form-card button[type="submit"], .form-card .action-btn { padding: 15px 30px; font-size: 1.1em; max-width: 250px; margin-top: 20px; }
+    .client-list h3 { font-size: 1.6em; }
+    .client-item { font-size: 1em; }
+    .navigation-buttons { gap: 10px; }
+
+}
+
+@media (max-width: 768px) {
+    .header h1 { font-size: 2.8em; }
+    .header p.slogan { font-size: 1.1em; margin-bottom: 30px; }
+    .separator { margin-bottom: 40px; }
+    .container { grid-template-columns: 1fr; gap: 20px; }
+    .card { padding: 25px; min-height: unset; }
+    .card h2 { font-size: 1.6em; }
+    .card p { font-size: 0.95em; }
+    .card button { padding: 14px 25px; font-size: 1em; }
+    .card .icon { font-size: 2.8em; margin-bottom: 15px; }
+
+    /* Form & List Responsiveness */
+    .header.list-header h1 { font-size: 2.5em; }
+    .header.list-header p.slogan { font-size: 1em; }
+    .separator.list-separator { margin-bottom: 30px; }
+    main.list-main { padding: 25px 20px; }
+    .search-form { gap: 10px; margin-bottom: 30px; }
+    .search-form input[type="submit"],
+    .search-form button[type="submit"] { padding: 9px 20px; font-size: 0.95em; }
+    .client-list-section h2,
+    .restaurant-list-section h2 { font-size: 1.8em; }
+    .client-item,
+    .restaurant-item { padding: 12px 0; font-size: 1em; }
+    .client-info span.name,
+    .restaurant-info span.name { font-size: 1.05em; }
+    .client-info span.contact,
+    .restaurant-info span.details { font-size: 0.9em; }
+    .client-actions,
+    .restaurant-actions { gap: 8px; }
+    .action-btn { padding: 7px 10px; font-size: 0.8em; }
+    .add-new-client-btn,
+    .add-new-restaurant-btn { padding: 12px 25px; font-size: 1em; max-width: 200px; margin-top: 30px; }
+
+    /* Nav Responsiveness for principal.html */
+    .functions-btn span { display: none; } 
+    .functions-btn { padding: 10px !important; border-radius: 50% !important; } 
+    .functions-btn i { margin-right: 0; } 
+}
+
+@media (max-width: 480px) {
+    body { padding: 15px; }
+    .header { margin-bottom: 20px; }
+    .header h1 { font-size: 2.2em; }
+    .header p.slogan { font-size: 1em; margin-bottom: 25px; }
+    .separator { margin-bottom: 30px; }
+    .card { padding: 20px; }
+    .card h2 { font-size: 1.4em; }
+    .card p { font-size: 0.9em; margin-bottom: 20px; }
+    .card button { padding: 12px 20px; font-size: 0.95em; }
+    .card .icon { font-size: 2.5em; }
+
+    /* Form & List Responsiveness */
+    .form-card { padding: 25px 30px; }
+    .form-card h2 { font-size: 1.8em; margin-bottom: 20px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group input, .form-group select { padding: 10px; font-size: 0.9em; }
+    .form-card button[type="submit"], .form-card .action-btn { padding: 12px 25px; font-size: 1em; max-width: 200px; margin-top: 18px; }
+}

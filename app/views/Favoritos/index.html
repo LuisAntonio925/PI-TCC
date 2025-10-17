@@ -1,21 +1,23 @@
 #{extends 'main.html' /}
 #{set title:'Meus Favoritos' /}
 
-<style>
-    /* ... cole o CSS da sua página listar.html aqui ... */
-    .favoritos-section { margin-bottom: 50px; }
-    .action-btn.favorite { background-color: #28a745; } /* Verde para favoritar */
-    .action-btn.unfavorite { background-color: #dc3545; } /* Vermelho para desfavoritar */
-</style>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Favoritos - RestApp</title>
+</head>
+<body class="list-page">
 
-<header class="header">
+<header class="header list-header">
     <h1>Restaurantes Favoritos</h1>
     <p class="slogan">Sua lista pessoal de lugares preferidos.</p>
 </header>
 
-<div class="separator"></div>
+<div class="separator list-separator"></div>
 
-<main>
+<main class="list-main">
     <div class="client-list-section favoritos-section">
         <h2><i class="fas fa-heart"></i> Meus Favoritos</h2>
         
@@ -33,7 +35,7 @@
                         <span class="contact"><i class="fas fa-tag"></i> ${rest.categoria}</span>
                     </div>
                     <div class="client-actions">
-                        <a href="@{Favoritos.alternarFavorito(rest.id)}" class="action-btn unfavorite">
+                        <a href="@{Favoritos.alternarFavorito(rest.id)}" class="action-btn unfavorite-btn">
                             <i class="fas fa-heart-crack"></i> Remover
                         </a>
                     </div>
@@ -43,4 +45,32 @@
         #{/else}
     </div>
 
+    <div class="client-list-section">
+        <h2><i class="fas fa-store"></i> Descubra Novos Restaurantes</h2>
+
+        #{if outrosRestaurantes.isEmpty()}
+            <div class="no-clients-message">
+                <p>Não há outros restaurantes para favoritar no momento.</p>
+            </div>
+        #{/if}
+        #{else}
+            <ul>
+                #{list items:outrosRestaurantes, as:'rest'}
+                <li class="client-item">
+                    <div class="client-info">
+                        <span class="name">${rest.nomeDoRestaurante}</span>
+                        <span class="contact"><i class="fas fa-tag"></i> ${rest.categoria}</span>
+                    </div>
+                    <div class="client-actions">
+                        <a href="@{Favoritos.alternarFavorito(rest.id)}" class="action-btn favorite-btn">
+                            <i class="fas fa-heart"></i> Favoritar
+                        </a>
+                    </div>
+                </li>
+                #{/list}
+            </ul>
+        #{/else}
+    </div>
 </main>
+</body>
+</html>
