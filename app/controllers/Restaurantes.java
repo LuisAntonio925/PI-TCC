@@ -36,21 +36,12 @@ public class Restaurantes extends Controller{
 
     // MÉTODO SALVAR - LÓGICA INVERTIDA
     public static void salvar(Restaurante rest, Long idCliente) {
-        
-        // Salva primeiro os dados do restaurante
+      
         rest.save();
-
-        if(idCliente != null) {
-            Cliente c = Cliente.findById(idCliente);
-            
-            // LÓGICA NOVA: Adiciona o restaurante à lista do cliente e salva o CLIENTE
-            if (c != null && !c.restaurantes.contains(rest)) {
-                c.restaurantes.add(rest);
-                c.save(); // Salva a entidade que é dona da relação!
-            }
-        }
+    
+    editar(rest.id);
         
-        editar(rest.id);
+        
     }
 
     public static void editar(long id) {
