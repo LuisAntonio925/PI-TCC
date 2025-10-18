@@ -40,6 +40,7 @@ public class Restaurantes extends Controller{
         rest.save();
     
     editar(rest.id);
+
         
         
     }
