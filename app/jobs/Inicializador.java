@@ -16,7 +16,7 @@ public class Inicializador extends Job {
 			joao.nome = "João da Silva";
 			joao.email = "joaossilva@gmail.com";
 			joao.setSenha("1111"); // CORREÇÃO: Chama o setter para criptografar a senha.
-			joao.nivel = "1";
+			joao.nivel = "Perfil.CLIENTE";
 			joao.save();
 			
 			

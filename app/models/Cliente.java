@@ -15,12 +15,16 @@ import play.libs.Crypto;
 @Entity
 public class Cliente extends Model {
     
+    public static final String login = null;
     public String nome;
     public String telefone;
     public String nivel;
     
     public String email;
     public String senha;
+
+    @Enumerated(EnumType.STRING)
+    public Perfil perfil;
 
     //criptografar a senha;
     public void setSenha(String s){
