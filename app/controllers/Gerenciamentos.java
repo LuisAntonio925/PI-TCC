@@ -8,7 +8,7 @@ import models.Status;
 import play.mvc.Controller;
 import play.mvc.With;
 
-@With(AdminSeguranca.class)
+@With(Seguranca.class)
 public class Gerenciamentos extends Controller {
     
    // MODIFICADO: Agora carrega os restaurantes e o cliente para a view.
@@ -67,7 +67,7 @@ public class Gerenciamentos extends Controller {
      * Recebe os dados do cliente e um ID opcional de restaurante para vincular.
      * Gerencia a atualização da senha e salva o cliente e suas relações.
      */
-    public static void salvar(Cliente cli, Long idRestaurante, String senha) {
+    public static void salvar(Cliente cli, Long idRestaurante) {
 
         // ... (toda a lógica de salvar a senha e o cliente que já fizemos)
     if (cli.id != null) { 
@@ -86,9 +86,6 @@ public class Gerenciamentos extends Controller {
         if (rest != null && !cli.restaurantes.contains(rest)) {
             cli.restaurantes.add(rest);
         }
-    }
-    if(senha.equals(" ") == false){
-        cli.senha = senha;
     }
     
     cli.save(); // Salva o cliente. Se for novo, ele ganha um ID aqui!

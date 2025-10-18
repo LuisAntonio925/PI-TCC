@@ -1,8 +1,6 @@
-// luisantonio925/projetopi-tcc/ProjetoPi-TCC-1f367715d58cce63ad3bf1ce68416d2a7aad77b1/app/controllers/Seguranca.java
 package controllers;
 
 import models.Cliente;
-import models.Perfil;
 import play.mvc.Before;
 import play.mvc.Controller;
 
@@ -25,11 +23,5 @@ public class Seguranca extends Controller{
         }
         return null;
     }
-	
-	@Before
-static void verificarAdministrador() {
-  	   String perfil = session.get("usuarioPerfil");
-  	  
-}
 
 }
