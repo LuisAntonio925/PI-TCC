@@ -5,11 +5,16 @@
 # Home page
 GET     /                                       Application.index
 
+# Rotas do Perfil do Cliente
+GET     /cliente/perfil             Clientes.perfil
+GET     /cliente/editar             Clientes.editarPerfil
+POST    /cliente/atualizar          Clientes.atualizarPerfil
+
 # Ignore favicon requests
 GET     /favicon.ico                            404
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 
-# Catch all
-*       /{controller}/{action}                  {controller}.{action}
+# Catch all (DEVE SER A ÚLTIMA ROTA)
+* /{controller}/{action}                  {controller}.{action}

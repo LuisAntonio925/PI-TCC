@@ -1,0 +1,25 @@
+##{extends 'main.html' /}
+#{set title:'Meu Perfil' /}
+
+<body class="list-page">
+    <header class="header list-header">
+        <h1>Meu Perfil</h1>
+        <p class="slogan">Veja e edite suas informações.</p>
+    </header>
+    <div class="separator list-separator"></div>
+    <main class="list-main">
+        <div class="form-card">
+            <h2>Dados Cadastrados</h2>
+            <p><strong>Nome:</strong> ${clienteLogado.nome}</p>
+            <p><strong>Email:</strong> ${clienteLogado.email}</p>
+            <p><strong>Telefone:</strong> ${clienteLogado.telefone}</p>
+            <hr class="form-separator">
+            <div class="navigation-buttons">
+                        <a href="@{ClientesPerfil.editarPerfil()}" class="action-btn edit-btn">
+19:                      <i class="fas fa-edit"></i> Editar Perfil               </a>
+                  <a href="@{Gerenciamentos.principal()}" class="action-btn"> Voltar para Início</a>
+            </div>
+        </div>
+    </main>
+
+ </body>

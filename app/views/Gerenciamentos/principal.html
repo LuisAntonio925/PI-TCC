@@ -8,15 +8,11 @@
 
         <div class="action-icons">
 
-              <a href="@{Favoritos.index}"  class="functions-btn">
-                   <i class="fa-solid fa-house"></i>
-                 <span>Favoritos</span>
-              </a>
-             <a href="@{Gerenciamentos.principal2}" class="functions-btn">
+             <a href="@{Gerenciamentos.principal}" class="functions-btn">
                  <i class="fa-solid fa-house"></i>
                  <span>Início</span>
              </a>
-             <a href="@{restaurantes.listar2}" title="Lista de Restaurantes">
+             <a href="@{favoritos.index}" title="Lista de Restaurantes">
                  <i class="fa-solid fa-store-alt"></i>
              </a>
              <div class="user-container" id="userContainer">
@@ -24,9 +20,9 @@
                      <i class="fa-solid fa-user"></i>
                  </a>
                  <div class="user-dropdown">
-                     <a href="#">Perfil Admin</a>
+                     <a href="@{ClientesPerfil.perfil}">Perfil</a>
                      <a href="#">Configurações</a>
-                     <a href="#">Sair</a>
+                     <a href="@{logins.logout}">Sair</a>
                  </div>
              </div>
         </div>
