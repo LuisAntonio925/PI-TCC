@@ -19,7 +19,21 @@ public class Inicializador extends Job {
 			joao.nivel = "Perfil.CLIENTE";
 			joao.save();
 			
-			
+			Cliente Luiza = new Cliente();
+			joao.nome = "João da Silva";
+			joao.email = "Luiza@gmail.com";
+			joao.setSenha("11111"); // CORREÇÃO: Chama o setter para criptografar a senha.
+			joao.nivel = "Perfil.CLIENTE";
+			joao.save();
+            
+			//fixo no mexe no perfil
+			Cliente Maria = new Cliente();
+			joao.nome = "João da Silva";
+			joao.email = "Luiza@gmail.com";
+			joao.setSenha("11111"); // CORREÇÃO: Chama o setter para criptografar a senha.
+			joao.nivel = "Perfil.CLIENTE";
+			joao.save();
+		
 		}
 			
 		

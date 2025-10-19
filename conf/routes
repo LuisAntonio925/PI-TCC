@@ -1,19 +1,21 @@
 # Routes
-# This file defines all application routes (Higher priority routes first)
-# ~~~~
-
-# Home page
-GET     /                                       Application.index
+# ...
 
 # Rotas do Perfil do Cliente
-GET     /cliente/perfil             Clientes.perfil
-GET     /cliente/editar             Clientes.editarPerfil
-POST    /cliente/atualizar          Clientes.atualizarPerfil
+GET     /cliente/perfil             ClientesPerfil.perfil
+GET     /cliente/editar             ClientesPerfil.editarPerfil
+POST    /cliente/atualizar          ClientesPerfil.atualizarPerfil
+
+# --- ADICIONE ESTAS LINHAS ---
+# Rotas de Cadastro de Cliente (Gerenciamentos)
+GET     /gerenciamentos/formcadastro    Gerenciamentos.formCadastro
+POST    /gerenciamentos/salvar          Gerenciamentos.salvar
+# --- FIM DAS LINHAS ADICIONADAS ---
 
 # Ignore favicon requests
 GET     /favicon.ico                            404
 
-# Map static resources from the /app/public folder to the /public path
+# Map static resources
 GET     /public/                                staticDir:public
 
 # Catch all (DEVE SER A ÚLTIMA ROTA)

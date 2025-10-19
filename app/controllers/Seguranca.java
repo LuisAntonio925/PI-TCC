@@ -3,16 +3,21 @@ package controllers;
 import models.Cliente;
 import play.mvc.Before;
 import play.mvc.Controller;
+import play.mvc.Http; // Importe Http
 
 public class Seguranca extends Controller{
-	
+
 	@Before
-	
 	static void verificarAutenticacao() {
-		if (!session.contains("clienteId")) { // CORREÇÃO: Verifica a chave 'clienteId'
+		// Obtém o nome da ação atual
+		String action = Http.Request.current().action;
+
+		// Verifica se a ação NÃO É a de cadastro e se o usuário NÃO está logado
+		if (!"Gerenciamentos.formCadastro".equals(action) && !session.contains("clienteId")) {
 			flash.error("Você deve logar no sistema.");
-			Logins.form();
+			Logins.form(); // Redireciona para o login
 		}
+		// Se for a ação formCadastro ou se o usuário estiver logado, continua normalmente
 	}
 
 	 static Cliente getClienteConectado() {
@@ -23,5 +28,4 @@ public class Seguranca extends Controller{
         }
         return null;
     }
-
 }

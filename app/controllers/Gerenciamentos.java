@@ -21,7 +21,7 @@ public class Gerenciamentos extends Controller {
         // Renderiza a view, passando a lista de restaurantes e o cliente
         render(restaurantes, clienteConectado); 
     }
-	 public static void principal2() {
+	 public static void ListasDeGerenciamentos() {
         render();
     }
     
