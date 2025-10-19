@@ -11,7 +11,7 @@
 <body class="list-page">
     <header class="header list-header">
         <h1>#{get 'title' /}</h1>
-        <p class="slogan">Gerencie os dados do cliente e seus restaurantes vinculados.</p>
+        <p class="slogan">Gerencie dados e restaurantes.</p>
     </header>
 
     <div class="separator list-separator"></div>
@@ -52,8 +52,28 @@
                     </select>
                 </div>
                 
+                #{if !cli?.id} <hr class="form-separator" style="margin: 20px 0;">
+                    
+                    <h3>Vincular restaurante (Opcional)</h3>
+                    <div class="form-group">
+                        <label for="restauranteSelect">Selecione um restaurante:</label>
+                        <select name="idRestaurante" id="restauranteSelect" class="form-select">
+                            <option value="">Selecione...</option>
+                            #{list items:restaurantesDisponiveis, as:'rest'}
+                                <option value="${rest.id}">${rest.nomeDoRestaurante}</option>
+                            #{/list}
+                        </select>
+                    </div>
+                #{/if}
                 
-                <button type="submit">Cadastrar</button>
+                <button type="submit">
+                    #{if cli?.id}
+                        Salvar Alterações
+                    #{/if}
+                    #{else}
+                        Cadastrar
+                    #{/else}
+                </button>
             </form>
         </div>
 
@@ -81,14 +101,13 @@
             </div>
 
             <div class="form-card form-card-secondary">
-                <h3>Vincular novo restaurante</h3>
+                <h3>Vincular novo restaurante (Modo Admin)</h3>
                 
                 <form action="@{Gerenciamentos.salvar()}" method="POST">
                     <input type="hidden" name="cli.id" value="${cli.id}" />
-
                     <div class="form-group">
-                        <label for="restauranteSelect">Selecione um restaurante:</label>
-                        <select name="idRestaurante" id="restauranteSelect" class="form-select">
+                        <label for="restauranteSelectAdmin">Selecione um restaurante:</label>
+                        <select name="idRestaurante" id="restauranteSelectAdmin" class="form-select">
                             <option value="">Selecione...</option>
                             #{list items:restaurantesDisponiveis, as:'rest'}
                                 <option value="${rest.id}">${rest.nomeDoRestaurante}</option>

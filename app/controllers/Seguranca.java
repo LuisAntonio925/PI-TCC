@@ -12,12 +12,21 @@ public class Seguranca extends Controller{
 		// Obtém o nome da ação atual
 		String action = Http.Request.current().action;
 
-		// Verifica se a ação NÃO É a de cadastro e se o usuário NÃO está logado
-		if (!"Gerenciamentos.formCadastro".equals(action) && !session.contains("clienteId")) {
+		// --- CORREÇÃO AQUI ---
+		// Lista de ações que NÃO exigem login
+		boolean acaoPublica = "Gerenciamentos.formCadastro".equals(action) || // Permite VER o formulário
+		                      "Gerenciamentos.salvar".equals(action) ||       // Permite SALVAR o formulário
+		                      "Logins.form".equals(action) ||                 // Permite VER o login
+		                      "Logins.logar".equals(action);                  // Permite TENTAR o login
+		// --- FIM DA CORREÇÃO ---
+
+
+		// Se a ação NÃO for pública E o utilizador NÃO estiver logado
+		if (!acaoPublica && !session.contains("clienteId")) {
 			flash.error("Você deve logar no sistema.");
 			Logins.form(); // Redireciona para o login
 		}
-		// Se for a ação formCadastro ou se o usuário estiver logado, continua normalmente
+		// Se a ação for pública ou se o usuário estiver logado, continua normalmente
 	}
 
 	 static Cliente getClienteConectado() {
