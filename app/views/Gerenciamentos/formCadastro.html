@@ -38,8 +38,10 @@
                     <input type="email" id="iEmail" name="cli.email" value="${cli?.email}" required>
                 </div>
                   <div class="form-group">
-                    <label for="iSenha">Senha:</label>
-                    <input type="password" id="iSenha" name="cli.senha" value="${cli?.senha}" required>
+                       <label for="iSenha">Senha:</label>
+                       <input type="password" id="iSenha" name="senha" value=""/>  #{if cli?.id}
+                        <small class="form-hint">Deixe em branco para não alterar a senha.</small>
+                      #{/if}
                 </div>
                 
                 <div class="form-group">
@@ -51,7 +53,7 @@
                 </div>
                 
                 
-                <button type="submit">Salvar Dados</button>
+                <button type="submit">Cadastrar</button>
             </form>
         </div>
 

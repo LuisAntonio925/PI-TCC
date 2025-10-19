@@ -7,35 +7,35 @@ import models.Restaurante;
 import models.Status;
 import play.mvc.Controller;
 import play.mvc.With;
+import play.data.validation.Validation; // Importe a validação
+import play.Logger; // Importe o Logger para depuração (opcional, mas útil)
 
 @With(Seguranca.class)
 public class Gerenciamentos extends Controller {
-    
-   // MODIFICADO: Agora carrega os restaurantes e o cliente para a view.
+
+    // ... (outros métodos como principal, principal2, listar, editar permanecem iguais) ...
+
     public static void principal() {
         Cliente clienteConectado = Seguranca.getClienteConectado();
-        
-        // Busca todos os restaurantes ATIVOS para exibir no feed
         List<Restaurante> restaurantes = models.Restaurante.find("status = ?1", models.Status.ATIVO).fetch();
-        
-        // Renderiza a view, passando a lista de restaurantes e o cliente
-        render(restaurantes, clienteConectado); 
-    }
-	 public static void ListasDeGerenciamentos() {
-        render();
-    }
-    
-    // Método para preparar o formulário para um NOVO cliente
-    public static void formCadastro() {
-        Cliente cli = new Cliente(); // Cria um objeto vazio para evitar erros na view
-        render(cli);
+        render(restaurantes, clienteConectado);
     }
 
-    // Método para listar os clientes com busca
+    public static void ListasDeGerenciamentos() {
+        render();
+    }
+
+    // Método para preparar o formulário para um NOVO cliente
+    public static void formCadastro() {
+        Cliente cli = new Cliente(); // Cria um objeto vazio
+        List<Restaurante> restaurantesDisponiveis = models.Restaurante.find("status = ?1", Status.ATIVO).fetch(); // Carrega restaurantes
+        renderTemplate("Gerenciamentos/formCadastro.html", cli, restaurantesDisponiveis);
+    }
+
     public static void listar(String termo) {
         List<Cliente> listaClientes = null;
         if (termo == null || termo.trim().isEmpty()) {
-            listaClientes = Cliente.find("status <> ?1", Status.INATIVO).fetch();   
+            listaClientes = Cliente.find("status <> ?1", Status.INATIVO).fetch();
         } else {
             listaClientes = Cliente.find("(lower(nome) like ?1 or lower(email) like ?1) and status <> ?2",
                         "%" + termo.toLowerCase() + "%",
@@ -43,65 +43,104 @@ public class Gerenciamentos extends Controller {
         }
         render(listaClientes, termo);
     }
-    
-    /**
-     * MÉTODO EDITAR - ATUALIZADO
-     * Carrega o cliente para edição e busca a lista de restaurantes
-     * que estão ATIVOS e que ainda NÃO foram vinculados a este cliente.
-     */
+
     public static void editar(long id) {
         Cliente cli = Cliente.findById(id);
-        
-        // Busca restaurantes que este cliente AINDA NÃO possui na sua lista.
         List<Restaurante> restaurantesDisponiveis = Restaurante.find(
-            "status = ?1 and ?2 not member of clientes", 
-            Status.ATIVO, 
+            "status = ?1 and ?2 not member of clientes",
+            Status.ATIVO,
             cli
         ).fetch();
-
         renderTemplate("Gerenciamentos/formCadastro.html", cli, restaurantesDisponiveis);
     }
-    
-    /**
-     * MÉTODO SALVAR - ATUALIZADO
-     * Recebe os dados do cliente e um ID opcional de restaurante para vincular.
-     * Gerencia a atualização da senha e salva o cliente e suas relações.
-     */
-    public static void salvar(Cliente cli, Long idRestaurante) {
 
-        // ... (toda a lógica de salvar a senha e o cliente que já fizemos)
-    if (cli.id != null) { 
-        Cliente clienteDoBanco = Cliente.findById(cli.id);
-        if (cli.senha == null || cli.senha.trim().isEmpty()) {
-            cli.senha = clienteDoBanco.senha;
+    /**
+     * MÉTODO SALVAR - CORRIGIDO
+     * 1. A assinatura foi alterada para receber a 'String senha' do formulário.
+     * 2. A lógica interna agora usa essa variável 'senha' para criar o hash.
+     */
+    public static void salvar(Cliente cli, String senha, Long idRestaurante) { // <<< PONTO CRÍTICO DA CORREÇÃO
+
+        Logger.info("Gerenciamentos.salvar - Tentando salvar cliente: %s", cli.email);
+
+        // Verifica se é uma ATUALIZAÇÃO (cliente já tem ID)
+        if (cli.id != null) {
+            Cliente clienteDoBanco = Cliente.findById(cli.id);
+            // Só atualiza a senha se o usuário digitou algo no campo 'senha'
+            if (senha != null && !senha.trim().isEmpty()) {
+                Logger.info("Atualizando senha para cliente ID: %d", cli.id);
+                cli.setSenha(senha); // <<< CORREÇÃO AQUI: Usa o parâmetro 'senha'
+            } else {
+                // Se o campo veio vazio, mantém a senha antiga (o hash) que já estava no banco
+                cli.senha = clienteDoBanco.senha;
+                 Logger.info("Mantendo senha antiga para cliente ID: %d", cli.id);
+            }
         } else {
-            cli.setSenha(cli.senha);
+            // É um NOVO cliente
+            Logger.info("Cadastrando novo cliente: %s", cli.email);
+            // Validação: Senha é obrigatória para novo cliente
+            if (senha == null || senha.trim().isEmpty()) {
+                validation.addError("senha", "Senha é obrigatória para novos cadastros");
+                 Logger.warn("Erro de validação: Senha em branco para novo cadastro.");
+            } else {
+                cli.setSenha(senha); // <<< CORREÇÃO AQUI: Usa o parâmetro 'senha' para criar o hash
+                 Logger.info("Hash da senha gerado para novo cliente: %s", cli.senha);
+            }
         }
-    } else {
-        cli.setSenha(cli.senha);
+
+        // Se houver erros de validação (ex: senha em branco no cadastro), volta pro formulário
+        if(validation.hasErrors()) {
+            params.flash(); // Manter os dados digitados (nome, email, etc)
+            validation.keep(); // Manter os erros para exibir na view
+            Logger.warn("Erros de validação encontrados. Retornando ao formulário.");
+
+            // Recarregar a lista de restaurantes para a view
+            List<Restaurante> restaurantesDisponiveis = null;
+            if (cli.id != null) {
+                 restaurantesDisponiveis = Restaurante.find(
+                    "status = ?1 and ?2 not member of clientes",
+                    Status.ATIVO,
+                    cli
+                ).fetch();
+            } else {
+                 restaurantesDisponiveis = models.Restaurante.find("status = ?1", Status.ATIVO).fetch();
+            }
+            renderTemplate("Gerenciamentos/formCadastro.html", cli, restaurantesDisponiveis);
+        }
+
+        // Lógica para vincular restaurante (já estava correta)
+        if (idRestaurante != null) {
+             Logger.info("Tentando vincular restaurante ID: %d", idRestaurante);
+            Restaurante rest = Restaurante.findById(idRestaurante);
+            if (rest != null && !cli.restaurantes.contains(rest)) {
+                cli.restaurantes.add(rest);
+                 Logger.info("Restaurante ID %d vinculado.", idRestaurante);
+            }
+        }
+
+        try {
+            cli.save(); // Salva o cliente (agora com o hash correto da senha)
+            Logger.info("Cliente ID %d salvo/atualizado com sucesso.", cli.id);
+            flash.success("Cliente salvo com sucesso!");
+             // Redireciona para a tela de edição
+            editar(cli.id);
+        } catch (Exception e) {
+            Logger.error(e, "Erro ao salvar cliente ID %d", cli.id);
+            flash.error("Ocorreu um erro ao salvar o cliente.");
+            // Recarrega a lista e re-renderiza o form em caso de erro no save
+            List<Restaurante> restaurantesDisponiveis = null;
+             if (cli.id != null) {
+                 restaurantesDisponiveis = Restaurante.find(
+                     "status = ?1 and ?2 not member of clientes", Status.ATIVO, cli
+                 ).fetch();
+             } else {
+                 restaurantesDisponiveis = models.Restaurante.find("status = ?1", Status.ATIVO).fetch();
+             }
+             validation.keep(); // Manter erros se houver
+            renderTemplate("Gerenciamentos/formCadastro.html", cli, restaurantesDisponiveis);
+        }
     }
 
-    if (idRestaurante != null) {
-        Restaurante rest = Restaurante.findById(idRestaurante);
-        if (rest != null && !cli.restaurantes.contains(rest)) {
-            cli.restaurantes.add(rest);
-        }
-    }
-    
-    cli.save(); // Salva o cliente. Se for novo, ele ganha um ID aqui!
-    
-    flash.success("Cliente salvo com sucesso!");
-    
-    // LINHA MAIS IMPORTANTE:
-    // Redireciona para a tela de edição DESTE MESMO cliente.
-    // Agora que ele tem um ID, a view mostrará as opções de edição.
-    editar(cli.id); 
-}
-    
-    /**
-     * NOVO MÉTODO PARA REMOVER VÍNCULO COM RESTAURANTE
-     * Remove um restaurante da lista de um cliente específico e salva a alteração.
-     */
     public static void removerRestaurante(Long idCli, Long idRest) {
         Cliente cli = Cliente.findById(idCli);
         Restaurante rest = Restaurante.findById(idRest);
@@ -113,14 +152,11 @@ public class Gerenciamentos extends Controller {
         } else {
             flash.error("Ocorreu um erro ao tentar remover o vínculo.");
         }
-        
+
         // Recarrega a página de edição do cliente
-        editar(idCli); 
+        editar(idCli);
     }
 
-    /**
-     * Método para inativar (remover logicamente) um cliente.
-     */
     public static void remover(long id) {
         Cliente cli = Cliente.findById(id);
         cli.status = Status.INATIVO;
