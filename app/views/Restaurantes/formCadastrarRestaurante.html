@@ -4,82 +4,91 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciamento de Restaurantes</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Restaurantes</title>
 </head>
 <body class="list-page">
-    <header class="header list-header">
-        <h1>Gerenciamento de Restaurantes</h1>
-        <p class="slogan">Adicione, edite e organize seus restaurantes e seus respectivos clientes.</p>
-    </header>
+    <header class="header list-header">
+        <h1>Gerenciamento de Restaurantes</h1>
+        <p class="slogan">Adicione, edite e organize seus restaurantes e seus respectivos clientes.</p>
+    </header>
 
-    <div class="separator list-separator"></div>
+    <div class="separator list-separator"></div>
 
-    <main>
-        <div class="form-card">
-            <h2>Novo Restaurante</h2>
-            <form action ="@{Restaurantes.salvar}" method="POST">
-                <input type="hidden" name="rest.id" value="${R?.id}">
+    <main>
+        <div class="form-card">
+            <h2>Novo Restaurante</h2>
+            
+            #{form @Restaurantes.salvar(), enctype:'multipart/form-data'}
+                <input type="hidden" name="rest.id" value="${R?.id}">
 
-                <div class="form-group">
-                    <label for="nomeDoRestaurante">Nome do Restaurante:</label>
-                    <input type="text" id="nomeDoRestaurante" name="rest.nomeDoRestaurante" value="${R?.nomeDoRestaurante}" placeholder="Ex: Sabor da Casa" required>
-                </div>
+                <div class="form-group">
+                    <label for="nomeDoRestaurante">Nome do Restaurante:</label>
+                    <input type="text" id="nomeDoRestaurante" name="rest.nomeDoRestaurante" value="${R?.nomeDoRestaurante}" placeholder="Ex: Sabor da Casa" required>
+                </div>
 
-                <div class="form-group">
-                    <label for="cnpj">CNPJ:</label>
-                    <input type="text" id="cnpj" name="rest.CNPJ" value="${R?.CNPJ}" placeholder="Ex: 00.000.000/0000-00" required>
-                </div>
+                <div class="form-group">
+                    <label for="cnpj">CNPJ:</label>
+                    <input type="text" id="cnpj" name="rest.CNPJ" value="${R?.CNPJ}" placeholder="Ex: 00.000.000/0000-00" required>
+                </div>
 
-                <div class="form-group">
-                    <label for="categoria">Categoria:</label>
-                    <input type="text" id="categoria" name="rest.categoria" value="${R?.categoria}" placeholder="Ex: Brasileira, Italiana, Japonesa" required>
-                </div>
+                <div class="form-group">
+                    <label for="categoria">Categoria:</label>
+                    <input type="text" id="categoria" name="rest.categoria" value="${R?.categoria}" placeholder="Ex: Brasileira, Italiana, Japonesa" required>
+                </div>
+                
+                                <div class="form-group">
+                    <label for="imagem">Imagem do Restaurante:</label>
+                    <input type="file" id="imagem" name="imagem">
+                </div>
+                
 
-                #{if R?.id}
-                <div class="form-group">
-                    <label for="idCliente">Clientes:</label>
-                    <select id="idCliente" name="idCliente" class="form-select">
-                        <option value=""></option>
-                        #{list items: clientes, as:'clie'}
-                        <option value="${clie.id}">${clie.nome}</option>
-                        #{/list}
-                    </select>
-                </div>
-				<input type="submit" value="Vincular" class="action-btn">
-                #{/if}
-				
-                #{if !R?.id}
-                <button type="submit">Cadastrar</button>
-                #{/if}
-            </form>
-			
-            #{if R?.id}
-            <div class="client-list">
-                <h3>Clientes Vinculados</h3>
-                <div id="clientListContainer">
-                    #{if R?.clientes?.isEmpty()}
-                    <p>Nenhum cliente vinculado.</p>
-                    #{/if}
-                    #{else}
-                    #{list items: R.clientes, as:'listac'}
-                    <div class="client-item">
-                        <span>${listac.nome}</span>
-                        <a href="@{Restaurantes.removerCliente(R.id, listac.id )}" class="remove-btn">remover</a>
-                    </div>
-                    #{/list}
-                    #{/else}
-                </div>
-            </div>
+                #{if R?.id}
+                <div class="form-group">
+                    <label for="idCliente">Clientes:</label>
+                    <select id="idCliente" name="idCliente" class="form-select">
+                        <option value=""></option>
+                        #{list items: clientes, as:'clie'}
+                        <option value="${clie.id}">${clie.nome}</option>
+                        #{/list}
+                    </select>
+                </div>
+                <input type="submit" value="Vincular" class="action-btn">
+                #{/if}
+                
+                #{if !R?.id}
 
-            
-            <div class="navigation-buttons">
-                <a href="@{Restaurantes.formCadastrarRestaurante()}" class="action-btn">Cadastrar Novo</a>
-                <a href="@{Gerenciamentos.principal}" class="action-btn">Voltar </a>
-            </div>
-            #{/if}
-        </div>
-    </main>
+                <button type="submit">Cadastrar</button>
+                #{/if}
+
+            #{/form}
+            
+            #{if R?.id}
+            <div class="client-list">
+                <h3>Clientes Vinculados</h3>
+                <div id="clientListContainer">
+                    #{if R?.clientes?.isEmpty()}
+                    <p>Nenhum cliente vinculado.</p>
+                    #{/if}
+                    #{else}
+                    #{list items: R.clientes, as:'listac'}
+                    <div class="client-item">
+                        <span>${listac.nome}</span>
+                        <a href="@{Restaurantes.removerCliente(R.id, listac.id )}" class="remove-btn">remover</a>
+                    </div>
+                    #{/list}
+                    #{/else}
+                </div>
+            </div>
+
+            
+            <div class="navigation-buttons">
+                <a href="@{Restaurantes.formCadastrarRestaurante()}" class="action-btn">Cadastrar Novo</a>
+                <a href="@{Gerenciamentos.principal}" class="action-btn">Voltar </a>
+            </div>
+            #{/if}
+        </div>
+    </main>
 </body>
 </html>

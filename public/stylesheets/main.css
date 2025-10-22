@@ -314,6 +314,33 @@ main.list-main {
 .user-container.active .user-dropdown { display: block; }
 .user-dropdown a { padding: 12px 18px; display: block; color: var(--tertiary-color); font-weight: 500; font-size: 0.9em; }
 .user-dropdown a:hover { background-color: var(--gradient-start); color: var(--primary-color); }
+/* Adicione isso ao seu main.css */
+.user-dropdown .dropdown-user-name {
+    padding: 10px 18px; /* Espaçamento similar aos links */
+    display: block;      /* Para ocupar a linha toda */
+    color: var(--tertiary-color); /* Cor do texto */
+    font-weight: 600;     /* Deixar em negrito */
+    font-size: 0.95em;
+    border-bottom: 1px solid var(--line-color); /* Linha separadora opcional */
+    cursor: default; /* Indicar que não é clicável */
+}
+
+/* Ajuste o padding do primeiro link para não ficar colado */
+.user-dropdown a:first-of-type {
+    /* Pode ser necessário ajustar se o primeiro item for o nome */
+}
+.user-dropdown a { /* Mantenha seus estilos existentes para os links */
+    padding: 12px 18px;
+    display: block;
+    color: var(--tertiary-color);
+    font-weight: 500;
+    font-size: 0.9em;
+    text-decoration: none; /* Garanta que não tem sublinhado */
+}
+.user-dropdown a:hover {
+    background-color: var(--gradient-start);
+    color: var(--primary-color);
+}
 
 /* Main Content Wrapper for principal.html */
 .header-content { 

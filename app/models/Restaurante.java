@@ -8,6 +8,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Enumerated;
 import javax.persistence.EnumType;
 
+import play.db.jpa.Blob;
 import play.db.jpa.Model;
 
 @Entity
@@ -16,6 +17,8 @@ public class Restaurante extends Model {
     public String nomeDoRestaurante;
     public String CNPJ;
     public String categoria;
+    
+    public Blob imagem;
     
     @Enumerated(EnumType.STRING)
     public Status status;
@@ -29,4 +32,6 @@ public class Restaurante extends Model {
     // DEPOIS:
     @ManyToMany(mappedBy="restaurantes") // Agora usa mappedBy
     public List<Cliente> clientes;
+
+
 }
