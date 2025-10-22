@@ -2,6 +2,8 @@ package controllers;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import models.Cliente;
 import models.Restaurante;
 import models.Status;
@@ -71,7 +73,13 @@ public class Gerenciamentos extends Controller {
      * 2. Lógica interna usa a variável 'senha' para criar o hash.
      */
     // vvvvvvvvvvvv A CORREÇÃO ESTÁ AQUI vvvvvvvvvvvv
-    public static void salvar(Cliente cli, String senha, Long idRestaurante) {
+    public static void salvar(@Valid Cliente cli, String senha, Long idRestaurante) {
+         
+        if(validation.hasErrors()){
+            validation.keep();
+            params.flash();
+            formCadastro();
+        }
 
         // Verifica se é uma ATUALIZAÇÃO (cliente já tem ID)
         if (cli.id != null) { 

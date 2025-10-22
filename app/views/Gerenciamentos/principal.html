@@ -65,21 +65,3 @@
     </div>
 
 </main>
-
-    
-    <script>
-        function toggleUserDropdown(e) {
-            e.preventDefault(); 
-            const userContainer = e.currentTarget.closest('.user-container');
-            userContainer.classList.toggle('active');
-            e.stopPropagation(); 
-        }
-
-        window.addEventListener('click', function(e){
-            const userContainer = document.getElementById('userContainer');
-            if(userContainer && !userContainer.contains(e.target)){
-                userContainer.classList.remove('active');
-            }
-        });
-    </script>
-</body>

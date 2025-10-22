@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pt-br">
     <head>
         <title>#{get 'title' /}</title>
@@ -10,29 +9,69 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        
         <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
         #{get 'moreStyles' /}
         <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
     </head>
-    <body>
+    
+    <body class="nav-padding">
 	
-		
-		#{if flash.success}
+        <nav class="ifood-nav">
+            <a href="@{Gerenciamentos.ListasDeGerenciamentos}" class="app-logo">RestApp</a>
+            <div class="search-bar"></div> 
+            <div class="action-icons">
+                <a href="@{Gerenciamentos.principal}" class="functions-btn">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Início</span>
+                </a>
+                <a href="@{favoritos.index}" title="Lista de Restaurantes">
+                    <i class="fa-solid fa-store-alt"></i>
+                </a>
+                <div class="user-container" id="userContainer">
+                    <a href="#" class="user-icon" onclick="toggleUserDropdown(event)">
+                        <i class="fa-solid fa-user"></i>
+                    </a>
+                    <div class="user-dropdown">
+                        #{if clienteConectado}
+                            <span class="dropdown-user-name">Olá, ${clienteConectado.nome}</span>
+                        #{/if}
+                        <a href="@{ClientesPerfil.perfil}">Perfil</a>
+                        <a href="@{Gerenciamentos.ListasDeGerenciamentos}">Configurações</a>
+                        <a href="@{Logins.logout}">Sair</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        #{if flash.success}
 		<div class="verde">${flash.success}</div>
 		#{/if}
 		
 		#{if flash.error}
 			<div class="vermelho">${flash.error}</div>
-			#{/if}
-
-         
+		#{/if}
 			
         #{doLayout /}
 		
         
         <script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
         #{get 'moreScripts' /}
+        
+        <script>
+            function toggleUserDropdown(e) {
+                e.preventDefault(); 
+                const userContainer = e.currentTarget.closest('.user-container');
+                userContainer.classList.toggle('active');
+                e.stopPropagation(); 
+            }
+    
+            window.addEventListener('click', function(e){
+                const userContainer = document.getElementById('userContainer');
+                if(userContainer && !userContainer.contains(e.target)){
+                    userContainer.classList.remove('active');
+                }
+            });
+        </script>
         
     </body>
 </html>

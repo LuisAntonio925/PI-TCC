@@ -9,18 +9,32 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinTable; // Importe JoinTable
 import javax.persistence.ManyToMany;
 
+import net.sf.oval.constraint.MinSize;
+import play.data.validation.Email;
+import play.data.validation.Max;
+import play.data.validation.Min;
+import play.data.validation.Required;
 import play.db.jpa.Model;
 import play.libs.Crypto;
 
 @Entity
 public class Cliente extends Model {
+
     
-    public static final String login = null;
+    @Required
+    @MinSize(3)
     public String nome;
+     
+    @Min(8)
+    @Max(15)
     public String telefone;
-    public String nivel;
-    
+
+    @Required
+    @Email
     public String email;
+
+    @Required
+    @Min(8)
     public String senha;
 
     @Enumerated(EnumType.STRING)

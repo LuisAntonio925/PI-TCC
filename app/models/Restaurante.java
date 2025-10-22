@@ -5,17 +5,28 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+
+import net.sf.oval.constraint.MinSize;
+
 import javax.persistence.Enumerated;
 import javax.persistence.EnumType;
 
+import play.data.validation.Min;
+import play.data.validation.Required;
 import play.db.jpa.Blob;
 import play.db.jpa.Model;
 
 @Entity
 public class Restaurante extends Model {
     
+    @Required
+    @MinSize(3)
     public String nomeDoRestaurante;
+
+    @Min(14)
     public String CNPJ;
+
+    @Required
     public String categoria;
     
     public Blob imagem;
