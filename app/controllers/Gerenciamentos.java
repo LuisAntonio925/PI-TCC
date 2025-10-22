@@ -14,7 +14,7 @@ import play.data.validation.Validation; // IMPORTANTE: Adicione este import
 @With(Seguranca.class)
 public class Gerenciamentos extends Controller {
     
-   // MODIFICADO: Agora carrega os restaurantes e o cliente para a view.
+    // MODIFICADO: Agora carrega os restaurantes e o cliente para a view.
     public static void principal() {
         Cliente clienteConectado = Seguranca.getClienteConectado();
         
@@ -69,17 +69,14 @@ public class Gerenciamentos extends Controller {
     
     /**
      * MÉTODO SALVAR - CORRIGIDO
-     * 1. Assinatura alterada para receber a 'String senha' do formulário.
-     * 2. Lógica interna usa a variável 'senha' para criar o hash.
+     * 1. Removemos o primeiro bloco if(validation.hasErrors()) que quebrava a lógica.
+     * 2. O segundo bloco agora captura TODOS os erros (@Valid e manuais da senha)
+     * e renderiza o template com o 'cli' correto, mostrando os erros.
      */
-    // vvvvvvvvvvvv A CORREÇÃO ESTÁ AQUI vvvvvvvvvvvv
     public static void salvar(@Valid Cliente cli, String senha, Long idRestaurante) {
          
-        if(validation.hasErrors()){
-            validation.keep();
-            params.flash();
-            formCadastro();
-        }
+        // O PRIMEIRO BLOCO DE VALIDAÇÃO FOI REMOVIDO DAQUI
+        // Ele chamava formCadastro() e apagava os erros.
 
         // Verifica se é uma ATUALIZAÇÃO (cliente já tem ID)
         if (cli.id != null) { 
@@ -87,7 +84,7 @@ public class Gerenciamentos extends Controller {
             
             // Só atualiza a senha se o usuário digitou algo no campo 'senha'
             if (senha != null && !senha.trim().isEmpty()) {
-                cli.setSenha(senha); // <<< CORREÇÃO AQUI: Usa o parâmetro 'senha'
+                cli.setSenha(senha); 
             } else {
                 // Se o campo veio vazio, mantém a senha antiga (o hash) que já estava no banco
                 cli.senha = clienteDoBanco.senha;
@@ -99,11 +96,11 @@ public class Gerenciamentos extends Controller {
             if (senha == null || senha.trim().isEmpty()) {
                 validation.addError("senha", "Senha é obrigatória para novos cadastros");
             } else {
-                cli.setSenha(senha); // <<< CORREÇÃO AQUI: Usa o parâmetro 'senha' para criar o hash
+                cli.setSenha(senha); // Usa o parâmetro 'senha' para criar o hash
             }
         }
         
-        // Se houver erros (ex: senha em branco no cadastro), volta pro formulário
+        // Se houver erros (ex: nome com 2 letras OU senha em branco), entra aqui
         if(validation.hasErrors()) {
             params.flash(); // Manter os dados digitados (nome, email, etc)
             validation.keep(); // Manter os erros para exibir na view
@@ -119,10 +116,14 @@ public class Gerenciamentos extends Controller {
             } else {
                  restaurantesDisponiveis = models.Restaurante.find("status = ?1", Status.ATIVO).fetch();
             }
+            
+            // *** ESTA É A FORMA CORRETA ***
+            // Renderiza a view de formulário, passando o 'cli' (com os dados errados)
+            // e a lista de restaurantes de volta.
             renderTemplate("Gerenciamentos/formCadastro.html", cli, restaurantesDisponiveis);
         }
 
-        // Lógica para vincular restaurante (já estava correta)
+        // Lógica para vincular restaurante (só executa se não houver erros)
         if (idRestaurante != null) {
             Restaurante rest = Restaurante.findById(idRestaurante);
             if (rest != null && !cli.restaurantes.contains(rest)) {
@@ -130,14 +131,14 @@ public class Gerenciamentos extends Controller {
             }
         }
         
-        cli.save(); // Salva o cliente (agora com o hash correto da senha)
+        // Salva o cliente (só executa se não houver erros)
+        cli.save(); 
         
         flash.success("Cliente salvo com sucesso!");
         
         // Redireciona para a tela de edição
         editar(cli.id); 
     }
-    // ^^^^^^^^^^^ FIM DA CORREÇÃO ^^^^^^^^^^^
     
     /**
      * NOVO MÉTODO PARA REMOVER VÍNCULO COM RESTAURANTE

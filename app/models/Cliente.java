@@ -33,8 +33,6 @@ public class Cliente extends Model {
     @Email
     public String email;
 
-    @Required
-    @Min(8)
     public String senha;
 
     @Enumerated(EnumType.STRING)

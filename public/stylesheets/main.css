@@ -1,13 +1,59 @@
-.verde{
-	color:white;
-	background-color:green;
-    
-}
-.vermelho{
-	color:white;
-	background-color:red;
+.flash-message {
+    width: 100%;
+    max-width: 800px; /* Mesmo tamanho do .list-main */
+    padding: 18px 25px;
+    margin: 0 auto 25px auto; /* Centralizado e com espaço abaixo */
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--text-light);
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    position: relative; /* Ajuste para o body.nav-padding */
+    top: 20px;
 }
 
+.flash-message.flash-success {
+    background-color: var(--success-color); /* Verde do seu tema */
+    border: 1px solid #1e7e34;
+}
+
+.flash-message.flash-error {
+    background-color: var(--error-color); /* Vermelho do seu tema */
+    border: 1px solid #b21f2d;
+}
+
+/* --- ESTILOS DE ERRO DE VALIDAÇÃO --- */
+
+/* Estiliza a MENSAGEM de erro (ex: "Nome é obrigatório") */
+/* O Play cria esta classe automaticamente */
+.error {
+    color: var(--error-color); /* Usa seu vermelho - #dc3545 */
+    font-size: 0.9em;
+    font-weight: 600;
+    display: block;
+    margin-top: 5px;
+    text-align: left; /* Garante alinhamento com o label */
+}
+
+/* Estiliza o CAMPO (input) que deu erro */
+/* O Play adiciona 'hasError' ao div pai (veja o HTML abaixo) */
+.hasError input[type="text"],
+.hasError input[type="email"],
+.hasError input[type="password"],
+.hasError select {
+    border-color: var(--error-color) !important;
+    background-color: #fff8f8; /* Um fundo levemente rosado */
+}
+
+/* Destaque no focus para o campo com erro */
+.hasError input[type="text"]:focus,
+.hasError input[type="email"]:focus,
+.hasError input[type="password"]:focus,
+.hasError select:focus {
+     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+}
 /*
 |==========================================================================
 | 0. VARIÁVEIS DE TEMA E BASE
@@ -757,6 +803,25 @@ main.list-main {
 .form-group {
     margin-bottom: 22px; 
     text-align: left;
+}
+
+.form-error {
+    color: var(--error-color);
+    font-size: 0.9em;
+    font-weight: 600;
+    display: block;
+    margin-top: 5px;
+}
+
+.form-group input.error,
+.form-group select.error {
+    border-color: var(--error-color);
+    background-color: #fff8f8;
+}
+
+.form-group input.error:focus,
+.form-group select.error:focus {
+     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
 }
 
 .form-group label {
