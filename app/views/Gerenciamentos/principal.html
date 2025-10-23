@@ -3,8 +3,38 @@
 
 <main>
     <header class="header-content"> 
-        <h1>Os Melhores Sabores da Cidade</h1>
-        <p class="slogan">Descubra restaurantes por categoria e encontre o seu próximo prato favorito.</p>
+        <div class="nav-padding">
+             <nav class="ifood-nav">
+            <a href="@{Gerenciamentos.ListasDeGerenciamentos}" class="app-logo">RestApp</a>
+            <div class="search-bar"></div> 
+            <div class="action-icons">
+                <a href="@{Gerenciamentos.principal}" class="functions-btn">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Início</span>
+                </a>
+                <a href="@{favoritos.index}" title="Lista de Restaurantes">
+                    <i class="fa-solid fa-store-alt"></i>
+                </a>
+                <div class="user-container" id="userContainer">
+                    <a href="#" class="user-icon" onclick="toggleUserDropdown(event)">
+                        <i class="fa-solid fa-user"></i>
+                    </a>
+                    <div class="user-dropdown">
+                        #{if clienteConectado}
+                            <span class="dropdown-user-name">Olá, ${clienteConectado.nome}</span>
+                        #{/if}
+                        <a href="@{ClientesPerfil.perfil}">Perfil</a>
+                        <a href="@{Gerenciamentos.ListasDeGerenciamentos}">Configurações</a>
+                        <a href="@{Logins.logout}">Sair</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        </div>
+        <div>
+            <h1>Os Melhores Sabores da Cidade</h1>
+            <p class="slogan">Descubra restaurantes por categoria e encontre o seu próximo prato favorito.</p>
+        </div>
     </header>
 
     <div class="separator"></div>
