@@ -3,19 +3,26 @@ validation.required=O campo %s e obrigatorio
 validation.minSize=O campo %s deve ter no minimo %d caracteres
 validation.maxSize=O campo %s deve ter no maximo %d caracteres
 validation.email=O campo %s deve ser um e-mail valido
-validation.min=O campo %s deve ter no minimo %d digitos
-validation.max=O campo %s deve ter no maximo %d digitos
+
 
 # --- APELIDOS (Traducoes) DOS CAMPOS DO CLIENTE ---
+# Vamos definir AMBAS as chaves (completa e curta) para garantir
 models.Cliente.nome=Nome
+cli.nome=Nome 
 models.Cliente.telefone=Telefone
-models.Cliente.email=E-mail
-senha=Senha
+cli.telefone=Telefone 
+models.Cliente.email=Email
+cli.email=Email 
+# Senha usa a chave simples definida no addError
+senha=Senha 
 
 # --- APELIDOS (Traducoes) DOS CAMPOS DO RESTAURANTE ---
 models.Restaurante.nomeDoRestaurante=Nome do restaurante
+rest.nomeDoRestaurante=Nome do restaurante 
 models.Restaurante.CNPJ=CNPJ
+rest.CNPJ=CNPJ 
 models.Restaurante.categoria=Categoria
+rest.categoria=Categoria 
 
 # --- Erro de E-mail duplicado ---
 validation.cliente.email.existe=Este email ja esta cadastrado.

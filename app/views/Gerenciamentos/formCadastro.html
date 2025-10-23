@@ -25,25 +25,76 @@
                     </ul>
                 </div>
             #{/ifErrors}
-            <form action="@{Gerenciamentos.salvar()}" method="POST"> <input type="hidden" name="cli.id" value="${cli?.id}"> #{field 'cli.nome'} <div class="form-group ${field.hasErrors ? 'hasError' : ''}"> <label for="${field.id}">Nome Completo:</label> <input type="text" id="${field.id}" name="${field.name}" value="${field.value ?: cli?.nome}" required> #{error field.name /} </div>
-                #{/field} #{field 'cli.telefone'} <div class="form-group ${field.hasErrors ? 'hasError' : ''}"> <label for="${field.id}">Telefone:</label> <input type="text" id="${field.id}" name="${field.name}" value="${field.value ?: cli?.telefone}" required> #{error field.name /} </div>
-                #{/field} #{field 'cli.email'} <div class="form-group ${field.hasErrors ? 'hasError' : ''}"> <label for="${field.id}">Email:</label> <input type="email" id="${field.id}" name="${field.name}" value="${field.value ?: cli?.email}" required> #{error field.name /} </div>
-                #{/field} #{field 'senha'} <div class="form-group ${field.hasErrors ? 'hasError' : ''}"> <label for="${field.id}">Senha:</label> <input type="password" id="${field.id}" name="${field.name}" value=""> #{if cli?.id} <small class="form-hint">Deixe em branco para não alterar a senha.</small> #{/if} #{error field.name /} </div>
-                #{/field} #{if restaurantesDisponiveis}
+            <form action="@{Gerenciamentos.salvar()}" method="POST">
+                <input type="hidden" name="cli.id" value="${cli?.id}">
+
+                #{field 'cli.nome'}
+                    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                        <label for="${field.id}">Nome Completo:</label>
+                        
+                        <input type="text" id="${field.id}" name="${field.name}" value="${field.value ?: cli?.nome}">
+                        #{error field.name /}
+                    </div>
+                #{/field}
+
+                #{field 'cli.telefone'}
+                    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                        <label for="${field.id}">Telefone:</label>
+                        
+                        <input type="text" id="${field.id}" name="${field.name}" value="${field.value ?: cli?.telefone}">
+                        #{error field.name /}
+                    </div>
+                #{/field}
+
+                #{field 'cli.email'}
+                    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                        <label for="${field.id}">Email:</label>
+                        
+                        <input type="email" id="${field.id}" name="${field.name}" value="${field.value ?: cli?.email}">
+                        #{error field.name /}
+                    </div>
+                #{/field}
+
+                #{field 'senha'}
+                    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                        <label for="${field.id}">Senha:</label>
+                        <input type="password" id="${field.id}" name="${field.name}" value="">
+                        #{if cli?.id}
+                            <small class="form-hint">Deixe em branco para não alterar a senha.</small>
+                        #{/if}
+                        #{error field.name /}
+                    </div>
+                #{/field}
+
+                #{if restaurantesDisponiveis}
                     <hr class="form-separator" style="margin: 20px 0;">
                     <h3>Vincular restaurante #{if cli?.id}(Adicionar Novo)#{/if}#{else}(Opcional)#{/else}</h3>
-                    #{field 'idRestaurante'} <div class="form-group ${field.hasErrors ? 'hasError' : ''}"> <label for="${field.id}">Selecione um restaurante:</label> <select name="${field.name}" id="${field.id}" class="form-select"> <option value="">Selecione...</option> #{list items:restaurantesDisponiveis, as:'rest'} <option value="${rest.id}" ${field.value == rest.id ? 'selected' : ''}>${rest.nomeDoRestaurante}</option> #{/list} </select> #{error field.name /} </div>
-                    #{/field} #{/if}
+                    #{field 'idRestaurante'}
+                        <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                            <label for="${field.id}">Selecione um restaurante:</label>
+                            <select name="${field.name}" id="${field.id}" class="form-select">
+                                <option value="">Selecione...</option>
+                                #{list items:restaurantesDisponiveis, as:'rest'}
+                                    <option value="${rest.id}" ${field.value == rest.id ? 'selected' : ''}>${rest.nomeDoRestaurante}</option>
+                                #{/list}
+                            </select>
+                            #{error field.name /}
+                        </div>
+                    #{/field}
+                #{/if}
 
                 <button type="submit">
                     #{if cli?.id} Salvar Alterações
                     #{/if} #{else} Cadastrar
-                    #{/else} </button>
+                    #{/else}
+                </button>
             </form>
         </div>
 
-        #{if cli?.id} <hr class="form-separator">
-             <div class="form-card form-card-secondary"> <h3>Restaurantes Vinculados</h3>
+        #{if cli?.id}
+            <hr class="form-separator">
+             <div class="form-card form-card-secondary">
+                 <h3>Restaurantes Vinculados</h3>
                 #{if cli.restaurantes.isEmpty()}
                     <p>Nenhum restaurante vinculado.</p>
                 #{/if}
@@ -62,7 +113,9 @@
                     </table>
                 #{/else}
             </div>
-            #{/if} <div class="navigation-buttons">
+            #{/if}
+
+         <div class="navigation-buttons">
             <a href="@{Gerenciamentos.listar(null)}" class="action-btn">Voltar para Lista</a>
             <a href="@{Gerenciamentos.principal()}" class="action-btn">Ir para Início</a>
          </div>

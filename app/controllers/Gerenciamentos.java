@@ -2,7 +2,7 @@ package controllers;
 
 import java.util.List;
 
-// Import @Valid (embora não seja usado na assinatura do salvar)
+// Import @Valid (não será usado na assinatura do salvar)
 import play.data.validation.Valid; 
 
 import models.Cliente;
@@ -52,41 +52,50 @@ public class Gerenciamentos extends Controller {
     }
     
     /**
-     * MÉTODO SALVAR - CORREÇÃO DEFINITIVA (Loop de Validação)
-     * 1. Removemos @Valid Cliente cli da assinatura do método.
-     * 2. Adicionamos validation.clear() ANTES de qualquer validação.
-     * 3. Adicionamos validation.valid(cli) para correr a validação manualmente.
+     * MÉTODO SALVAR - CORREÇÃO DEFINITIVA (Loop de Validação - Ordem Corrigida)
+     * 1. REMOVIDO @Valid Cliente cli da assinatura.
+     * 2. MOVIDO validation.clear() para ser a PRIMEIRA COISA.
+     * 3. CORRIDA validation.valid(cli) DEPOIS do clear.
+     * 4. CORRIDA a validação manual da senha DEPOIS do clear e valid.
      */
     // ANTES: public static void salvar(@Valid Cliente cli, String senha, Long idRestaurante)
     public static void salvar(Cliente cli, String senha, Long idRestaurante) { //
          
-        // ---- ALTERAÇÃO PRINCIPAL ----
-        validation.clear(); // 1. Limpa erros antigos "grudentos" da sessão/flash
-        validation.valid(cli); // 2. Valida o objeto 'cli' que o Play preencheu automaticamente
-        // -----------------------------
-
-        // Lógica de validação manual da senha (corre APÓS o clear e valid)
+        
+        // ---- ALTERAÇÃO PRINCIPAL NA ORDEM ----
+        validation.clear(); // 1. Limpa TODOS os erros antigos PRIMEIRO.
+        
+        // O Play já preencheu 'cli' com os dados do formulário automaticamente.
+        validation.valid(cli); // 2. Roda a validação automática (@Required, @MinSize, etc).
+        
+        // 3. Roda a validação manual da senha AGORA.
         if (cli.id != null) { 
+            // Edição
             Cliente clienteDoBanco = Cliente.findById(cli.id);
-            // Mantém a senha antiga se o campo veio vazio na edição
             if (senha == null || senha.trim().isEmpty()) {
-                 cli.senha = clienteDoBanco.senha; // Busca a senha hash do banco
+                 // Mantém a senha antiga se o campo veio vazio
+                 cli.senha = clienteDoBanco.senha; 
             } else {
-                 cli.setSenha(senha); // Define a nova senha (será criptografada pelo setSenha)
+                 // Define a nova senha (será criptografada pelo setSenha)
+                 cli.setSenha(senha); 
             }
+            // Na edição, a senha não é obrigatória, então não adicionamos erro se estiver vazia.
         } else {
-            // Novo cliente
+            // Novo cliente: Senha é obrigatória
             if (senha == null || senha.trim().isEmpty()) {
+                // Adiciona o erro da senha AQUI, depois do clear e valid
                 validation.addError("senha", "O campo Senha e obrigatorio");
             } else {
-                cli.setSenha(senha); // Define a senha (será criptografada)
+                 // Define a senha (será criptografada)
+                 cli.setSenha(senha); 
             }
         }
+        // ---- FIM DA ALTERAÇÃO NA ORDEM ----
         
-        // Verifica os erros (do validation.valid(cli) e do addError da senha)
+        // 4. Verifica os erros (do valid E do addError) DESTA TENTATIVA
         if(validation.hasErrors()) {
             params.flash(); // Mantém os dados digitados (nome, email...) nos campos
-            validation.keep(); // Guarda os erros DESTA tentativa para mostrar no render
+            validation.keep(); // Guarda os erros atuais para mostrar no render
             
             // Recarrega a lista de restaurantes necessária para o <select>
             List<Restaurante> restaurantesDisponiveis = null;
@@ -105,9 +114,6 @@ public class Gerenciamentos extends Controller {
         
         } else {
             // ---- SUCESSO! ----
-            // Só entra aqui se NENHUM erro ocorreu nesta tentativa
-
-            // Lógica de vincular restaurante
             if (idRestaurante != null) {
                 Restaurante rest = Restaurante.findById(idRestaurante);
                 if (rest != null && !cli.restaurantes.contains(rest)) {
@@ -117,11 +123,11 @@ public class Gerenciamentos extends Controller {
             
             cli.save(); 
             flash.success("Cliente salvo com sucesso!");
-            editar(cli.id); // Redireciona para a edição
+            editar(cli.id); 
         }
     }
     
-    // ... (resto dos seus métodos: removerRestaurante, remover) ...
+    // ... (resto dos seus métodos: removerRestaurante, remover estão corretos) ...
      public static void removerRestaurante(Long idCli, Long idRest) {
         Cliente cli = Cliente.findById(idCli);
         Restaurante rest = Restaurante.findById(idRest);

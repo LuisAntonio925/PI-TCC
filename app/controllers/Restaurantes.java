@@ -6,7 +6,7 @@ import java.util.List;
 import models.Cliente;
 import models.Restaurante;
 
-// Import @Valid (embora não seja usado na assinatura do salvar)
+// Import @Valid (não será usado na assinatura do salvar)
 import play.data.validation.Valid;
 // Import Validation para usar validation.clear(), validation.valid(), etc.
 import play.data.validation.Validation;
@@ -23,8 +23,7 @@ import play.libs.MimeTypes;
 public class Restaurantes extends Controller{
 	
     /**
-     * ALTERADO:
-     * Envia um objeto 'rest' vazio e a lista de clientes.
+     * CORRIGIDO: Envia um objeto 'rest' vazio e a lista de clientes.
      */
 	public static void formCadastrarRestaurante() {
 		Restaurante rest = new Restaurante(); 
@@ -53,25 +52,25 @@ public class Restaurantes extends Controller{
 	}
 
 	/**
-     * MÉTODO SALVAR - CORREÇÃO DEFINITIVA (Loop de Validação)
-     * 1. Removemos @Valid Restaurante rest da assinatura.
-     * 2. Adicionamos validation.clear() ANTES de qualquer validação.
-     * 3. Adicionamos validation.valid(rest) para correr a validação manualmente.
+     * MÉTODO SALVAR - CORREÇÃO DEFINITIVA (Loop de Validação - Ordem Corrigida)
+     * 1. REMOVIDO @Valid Restaurante rest da assinatura.
+     * 2. ADICIONADO validation.clear() ANTES de qualquer validação.
+     * 3. ADICIONADO validation.valid(rest) para correr a validação manualmente DEPOIS do clear.
      */
     // ANTES: public static void salvar(@Valid Restaurante rest, Long idCliente, File imagem)
 	public static void salvar(Restaurante rest, Long idCliente, File imagem) { //
 		
-        // ---- ALTERAÇÃO PRINCIPAL ----
-        validation.clear(); // 1. Limpa erros antigos "grudentos"
-        validation.valid(rest); // 2. Valida o objeto 'rest' que o Play preencheu
-        // -----------------------------
+        // ---- ALTERAÇÃO PRINCIPAL NA ORDEM ----
+        validation.clear(); // 1. Limpa erros antigos "grudentos" PRIMEIRO.
+        // O Play já preencheu 'rest' com os dados do formulário.
+        validation.valid(rest); // 2. Roda a validação automática (@Required, @MinSize, etc).
+        // ------------------------------------
 		
-        // Verifica os erros do validation.valid(rest)
+        // 3. Verifica os erros (do validation.valid) DESTA TENTATIVA
         if (validation.hasErrors()) {
-            params.flash(); // Mantém os dados digitados nos campos
-            validation.keep(); // Guarda os erros DESTA tentativa para mostrar no render
+            params.flash(); 
+            validation.keep(); 
 
-            // Recarrega a lista de clientes para o <select>
             List<Cliente> clientes = null;
 	        if (rest.id != null) {
 	             clientes = Cliente.find("?1 not member of restaurantes", rest).fetch();
@@ -79,14 +78,10 @@ public class Restaurantes extends Controller{
 	             clientes = Cliente.findAll();
 	        }
             
-            // Renderiza o formulário de novo, mostrando os erros atuais
 	        renderTemplate("Restaurantes/formCadastrarRestaurante.html", rest, clientes);
         
         } else {
             // ---- SUCESSO! ----
-            // Só entra aqui se NENHUM erro ocorreu nesta tentativa
-
-            // Lógica de upload de imagem
     		if (imagem != null && imagem.length() > 0) {
     			if (rest.imagem == null) {
     				rest.imagem = new Blob();
@@ -96,17 +91,14 @@ public class Restaurantes extends Controller{
     			} catch (FileNotFoundException e) {
     				e.printStackTrace(); 
     				flash.error("Erro ao tentar salvar a imagem.");
-    				// Mesmo com erro na imagem, vamos para a edição para não perder outros dados
-                    // Mas salvamos o restaurante antes
-                    rest.save(); 
+                    rest.save(); // Salva mesmo assim
     				editar(rest.id); 
-                    return; // Importante sair aqui para não executar o resto
+                    return; 
     			}
     		}
 
-    		rest.save(); // Salva o restaurante (com ou sem imagem nova)
+    		rest.save(); 
 
-            // Lógica de associar cliente
     		if(idCliente != null) {
     			Cliente c = Cliente.findById(idCliente);
     			if (c != null && !c.restaurantes.contains(rest)) {
@@ -116,13 +108,12 @@ public class Restaurantes extends Controller{
     		}
     		
             flash.success("Restaurante salvo com sucesso!");
-    		editar(rest.id); // Redireciona para a edição
+    		editar(rest.id); 
 	    }
 	}
 
     /**
-     * ALTERADO:
-     * Usa a variável 'rest' (não 'R') para ser consistente.
+     * CORRIGIDO: Usa a variável 'rest' (não 'R').
      */
 	public static void editar(long id) {
         Restaurante rest = Restaurante.findById(id); 
@@ -130,7 +121,7 @@ public class Restaurantes extends Controller{
         renderTemplate("Restaurantes/formCadastrarRestaurante.html", rest, clientes); 
 	}
 
-	// ... (resto dos seus métodos: remover, removerCliente, getImagem) ...
+	// ... (resto dos seus métodos: remover, removerCliente, getImagem estão corretos) ...
     public static void remover(long id) {
 		Restaurante rest = Restaurante.findById(id);
 		rest.status = Status.INATIVO;
@@ -144,9 +135,12 @@ public class Restaurantes extends Controller{
 		if (cli != null && rest != null) {
 			cli.restaurantes.remove(rest);
 			cli.save(); 
-		}
+            flash.success("Cliente desvinculado com sucesso."); 
+		} else {
+            flash.error("Erro ao tentar desvincular cliente.");
+        }
 		
-		editar(rest.id);
+		editar(rest.id); 
 	}
     public static void getImagem(Long id) {
         Restaurante rest = Restaurante.findById(id);

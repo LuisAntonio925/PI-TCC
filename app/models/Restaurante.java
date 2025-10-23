@@ -20,12 +20,10 @@ import play.db.jpa.Model;
 public class Restaurante extends Model {
     
     @Required
-    @MinSize(3)
     public String nomeDoRestaurante;
 
-    // ---- CORREÇÃO AQUI ----
-    @Required // ADICIONADO
-    @Min(14)
+
+    @Required 
     public String CNPJ;
 
     @Required
