@@ -2,26 +2,25 @@ package controllers;
 
 import java.util.List;
 
-// ---- CORREÇÃO IMPORTANTE AQUI ----
-// import javax.validation.Valid;  // REMOVA ESTA LINHA
-import play.data.validation.Valid; // ADICIONE ESTA LINHA
-// --------------------------------
+// Import @Valid (embora não seja usado na assinatura do salvar)
+import play.data.validation.Valid; 
 
 import models.Cliente;
 import models.Restaurante;
 import models.Status;
 import play.mvc.Controller;
 import play.mvc.With;
-import play.data.validation.Validation; // Este import está correto
+// Import Validation para usar validation.clear(), validation.valid(), etc.
+import play.data.validation.Validation; 
 
 @With(Seguranca.class)
 public class Gerenciamentos extends Controller {
     
-    // ... (seus métodos principal, ListasDeGerenciamentos, formCadastro, listar, editar estão OK) ...
+    // ... (os seus métodos principal, ListasDeGerenciamentos, formCadastro, listar, editar estão corretos) ...
     public static void principal() {
-        Cliente clienteConectado = Seguranca.getClienteConectado();
+        Cliente clienteConectar = Seguranca.getClienteConectado();
         List<Restaurante> restaurantes = models.Restaurante.find("status = ?1", models.Status.ATIVO).fetch();
-        render(restaurantes, clienteConectado); 
+        render(restaurantes, clienteConectar); 
     }
 	 public static void ListasDeGerenciamentos() {
         render();
@@ -52,30 +51,44 @@ public class Gerenciamentos extends Controller {
         renderTemplate("Gerenciamentos/formCadastro.html", cli, restaurantesDisponiveis);
     }
     
-   public static void salvar(@Valid Cliente cli, String senha, Long idRestaurante) { //
+    /**
+     * MÉTODO SALVAR - CORREÇÃO DEFINITIVA (Loop de Validação)
+     * 1. Removemos @Valid Cliente cli da assinatura do método.
+     * 2. Adicionamos validation.clear() ANTES de qualquer validação.
+     * 3. Adicionamos validation.valid(cli) para correr a validação manualmente.
+     */
+    // ANTES: public static void salvar(@Valid Cliente cli, String senha, Long idRestaurante)
+    public static void salvar(Cliente cli, String senha, Long idRestaurante) { //
          
-        // Lógica de validação manual da senha
+        // ---- ALTERAÇÃO PRINCIPAL ----
+        validation.clear(); // 1. Limpa erros antigos "grudentos" da sessão/flash
+        validation.valid(cli); // 2. Valida o objeto 'cli' que o Play preencheu automaticamente
+        // -----------------------------
+
+        // Lógica de validação manual da senha (corre APÓS o clear e valid)
         if (cli.id != null) { 
             Cliente clienteDoBanco = Cliente.findById(cli.id);
-            if (senha != null && !senha.trim().isEmpty()) {
-                cli.setSenha(senha); 
+            // Mantém a senha antiga se o campo veio vazio na edição
+            if (senha == null || senha.trim().isEmpty()) {
+                 cli.senha = clienteDoBanco.senha; // Busca a senha hash do banco
             } else {
-                cli.senha = clienteDoBanco.senha;
+                 cli.setSenha(senha); // Define a nova senha (será criptografada pelo setSenha)
             }
         } else {
+            // Novo cliente
             if (senha == null || senha.trim().isEmpty()) {
-                // Usamos a chave "senha" que definimos no conf/messages
                 validation.addError("senha", "O campo Senha e obrigatorio");
             } else {
-                cli.setSenha(senha); 
+                cli.setSenha(senha); // Define a senha (será criptografada)
             }
         }
         
-        // Agora que o cache foi limpo, este IF vai funcionar corretamente
+        // Verifica os erros (do validation.valid(cli) e do addError da senha)
         if(validation.hasErrors()) {
-            params.flash(); 
-            validation.keep(); // Guarda os erros SÓ para o próximo render
+            params.flash(); // Mantém os dados digitados (nome, email...) nos campos
+            validation.keep(); // Guarda os erros DESTA tentativa para mostrar no render
             
+            // Recarrega a lista de restaurantes necessária para o <select>
             List<Restaurante> restaurantesDisponiveis = null;
             if (cli.id != null) {
                  restaurantesDisponiveis = Restaurante.find(
@@ -87,10 +100,14 @@ public class Gerenciamentos extends Controller {
                  restaurantesDisponiveis = models.Restaurante.find("status = ?1", Status.ATIVO).fetch();
             }
             
+            // Renderiza o formulário de novo, mostrando os erros atuais
             renderTemplate("Gerenciamentos/formCadastro.html", cli, restaurantesDisponiveis);
         
         } else {
             // ---- SUCESSO! ----
+            // Só entra aqui se NENHUM erro ocorreu nesta tentativa
+
+            // Lógica de vincular restaurante
             if (idRestaurante != null) {
                 Restaurante rest = Restaurante.findById(idRestaurante);
                 if (rest != null && !cli.restaurantes.contains(rest)) {
@@ -100,20 +117,20 @@ public class Gerenciamentos extends Controller {
             
             cli.save(); 
             flash.success("Cliente salvo com sucesso!");
-            editar(cli.id); // Redireciona
+            editar(cli.id); // Redireciona para a edição
         }
     }
     
-    // ... (resto dos métodos removerRestaurante e remover estão OK) ...
-    public static void removerRestaurante(Long idCli, Long idRest) {
+    // ... (resto dos seus métodos: removerRestaurante, remover) ...
+     public static void removerRestaurante(Long idCli, Long idRest) {
         Cliente cli = Cliente.findById(idCli);
         Restaurante rest = Restaurante.findById(idRest);
         if (cli != null && rest != null) {
             cli.restaurantes.remove(rest); 
             cli.save(); 
-            flash.success("Vínculo com o restaurante '%s' foi removido.", rest.nomeDoRestaurante);
+            flash.success("Vinculo com o restaurante '%s' foi removido.", rest.nomeDoRestaurante);
         } else {
-            flash.error("Ocorreu um erro ao tentar remover o vínculo.");
+            flash.error("Ocorreu um erro ao tentar remover o vinculo.");
         }
         editar(idCli); 
     }

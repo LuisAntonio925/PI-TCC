@@ -7,7 +7,6 @@ validation.min=O campo %s deve ter no minimo %d digitos
 validation.max=O campo %s deve ter no maximo %d digitos
 
 # --- APELIDOS (Traducoes) DOS CAMPOS DO CLIENTE ---
-# (Usando a chave completa que apareceu no seu erro)
 models.Cliente.nome=Nome
 models.Cliente.telefone=Telefone
 models.Cliente.email=E-mail
@@ -18,5 +17,5 @@ models.Restaurante.nomeDoRestaurante=Nome do restaurante
 models.Restaurante.CNPJ=CNPJ
 models.Restaurante.categoria=Categoria
 
-# (Se você tiver a mensagem de email duplicado, mantenha-a)
+# --- Erro de E-mail duplicado ---
 validation.cliente.email.existe=Este email ja esta cadastrado.
