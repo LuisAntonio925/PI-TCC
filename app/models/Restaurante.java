@@ -1,6 +1,6 @@
 package models;
 
-import java.util.ArrayList; // Importe ArrayList
+import java.util.ArrayList; 
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -12,7 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.EnumType;
 
 import play.data.validation.Min;
-import play.data.validation.Required;
+import play.data.validation.Required; // Import está aqui
 import play.db.jpa.Blob;
 import play.db.jpa.Model;
 
@@ -23,6 +23,8 @@ public class Restaurante extends Model {
     @MinSize(3)
     public String nomeDoRestaurante;
 
+    // ---- CORREÇÃO AQUI ----
+    @Required // ADICIONADO
     @Min(14)
     public String CNPJ;
 
@@ -36,13 +38,9 @@ public class Restaurante extends Model {
     
     public Restaurante() {
         this.status = Status.ATIVO;
-        this.clientes = new ArrayList<Cliente>(); // Boa prática inicializar a lista
+        this.clientes = new ArrayList<Cliente>(); 
     }
     
-    // ANTES: @ManyToMany @JoinTable(name="cliente_restaurante")
-    // DEPOIS:
-    @ManyToMany(mappedBy="restaurantes") // Agora usa mappedBy
+    @ManyToMany(mappedBy="restaurantes") 
     public List<Cliente> clientes;
-
-
 }

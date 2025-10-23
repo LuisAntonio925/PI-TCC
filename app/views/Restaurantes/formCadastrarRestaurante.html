@@ -16,78 +16,61 @@
 
     <div class="separator list-separator"></div>
 
-    <main>
-        <div class="form-card">
-            <h2>Novo Restaurante</h2>
-            
-            #{form @Restaurantes.salvar(), enctype:'multipart/form-data'}
-                <input type="hidden" name="rest.id" value="${R?.id}">
+    <main class="list-main">         <div class="form-card">
+            <h2>#{if R?.id}Editar Restaurante#{/if}#{else}Novo Restaurante#{/else}</h2>
 
-                <div class="form-group">
-                    <label for="nomeDoRestaurante">Nome do Restaurante:</label>
-                    <input type="text" id="nomeDoRestaurante" name="rest.nomeDoRestaurante" value="${R?.nomeDoRestaurante}" placeholder="Ex: Sabor da Casa" required>
-                </div>
+            #{ifErrors}
+                <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: left;">
+                    <p>Por favor, corrija os erros abaixo:</p>
+                    <ul>
+                    #{errors}
+                        <li>${error}</li>
+                    #{/errors}
+                    </ul>
+                </div>
+            #{/ifErrors}
+            #{form @Restaurantes.salvar(), enctype:'multipart/form-data'}                 <input type="hidden" name="rest.id" value="${R?.id}"> #{field 'rest.nomeDoRestaurante'}
+                    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                        <label for="${field.id}">Nome do Restaurante:</label>
+                        <input type="text" id="${field.id}" name="${field.name}" value="${field.value ?: R?.nomeDoRestaurante}" placeholder="Ex: Sabor da Casa" required> #{error field.name /}                 </div>
+                #{/field}
 
-                <div class="form-group">
-                    <label for="cnpj">CNPJ:</label>
-                    <input type="text" id="cnpj" name="rest.CNPJ" value="${R?.CNPJ}" placeholder="Ex: 00.000.000/0000-00" required>
-                </div>
+                #{field 'rest.CNPJ'}
+                    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                        <label for="${field.id}">CNPJ:</label>
+                        <input type="text" id="${field.id}" name="${field.name}" value="${field.value ?: R?.CNPJ}" placeholder="Ex: 00.000.000/0000-00" required> #{error field.name /}                 </div>
+                #{/field}
 
-                <div class="form-group">
-                    <label for="categoria">Categoria:</label>
-                    <input type="text" id="categoria" name="rest.categoria" value="${R?.categoria}" placeholder="Ex: Brasileira, Italiana, Japonesa" required>
-                </div>
-                
-                                <div class="form-group">
-                    <label for="imagem">Imagem do Restaurante:</label>
-                    <input type="file" id="imagem" name="imagem">
-                </div>
-                
+                #{field 'rest.categoria'}
+                    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                        <label for="${field.id}">Categoria:</label>
+                        <input type="text" id="${field.id}" name="${field.name}" value="${field.value ?: R?.categoria}" placeholder="Ex: Brasileira, Italiana, Japonesa" required> #{error field.name /}                 </div>
+                #{/field}
 
-                #{if R?.id}
-                <div class="form-group">
-                    <label for="idCliente">Clientes:</label>
-                    <select id="idCliente" name="idCliente" class="form-select">
-                        <option value=""></option>
-                        #{list items: clientes, as:'clie'}
-                        <option value="${clie.id}">${clie.nome}</option>
-                        #{/list}
-                    </select>
-                </div>
-                <input type="submit" value="Vincular" class="action-btn">
-                #{/if}
-                
-                #{if !R?.id}
+                #{field 'imagem'}     <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                        <label for="${field.id}">Imagem do Restaurante:</label>
+                        <input type="file" id="${field.id}" name="${field.name}"> #{error field.name /}                 </div>
+                #{/field}
 
-                <button type="submit">Cadastrar</button>
-                #{/if}
-
-            #{/form}
-            
-            #{if R?.id}
+                                #{if R?.id} <hr class="form-separator">
+                    <h3>Vincular Cliente (Adicionar Novo)</h3>
+                    #{field 'idCliente'}             <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                            <label for="${field.id}">Clientes Disponíveis:</label>                     <select id="${field.id}" name="${field.name}" class="form-select">                         <option value="">Selecione para vincular...</option>                         #{list items: clientes, as:'clie'}                         <option value="${clie.id}">${clie.nome}</option>                         #{/list}                     </select> #{error field.name /}                 </div>
+                        <input type="submit" value="Vincular Cliente" class="action-btn"> #{/field}
+                #{/if}                 <button type="submit" name="acaoPrincipal" value="salvar"> #{if R?.id}Salvar Alterações#{/if}#{else}Cadastrar Restaurante#{/else}
+                </button>
+            #{/form}                         #{if R?.id} <hr class="form-separator">
             <div class="client-list">
                 <h3>Clientes Vinculados</h3>
                 <div id="clientListContainer">
-                    #{if R?.clientes?.isEmpty()}
-                    <p>Nenhum cliente vinculado.</p>
-                    #{/if}
-                    #{else}
-                    #{list items: R.clientes, as:'listac'}
-                    <div class="client-item">
-                        <span>${listac.nome}</span>
-                        <a href="@{Restaurantes.removerCliente(R.id, listac.id )}" class="remove-btn">remover</a>
-                    </div>
-                    #{/list}
-                    #{/else}
-                </div>
+                    #{if R?.clientes?.isEmpty()}                     <p>Nenhum cliente vinculado.</p>
+                    #{/if}                     #{else}                     #{list items: R.clientes, as:'listac'}                     <div class="client-item">
+                        <span>${listac.nome}</span>                         <a href="@{Restaurantes.removerCliente(R.id, listac.id )}" class="remove-btn" onclick="return confirm('Tem certeza que deseja desvincular este cliente?');">remover</a>                     </div>
+                    #{/list}                     #{/else}                 </div>
             </div>
-
-            
-            <div class="navigation-buttons">
-                <a href="@{Restaurantes.formCadastrarRestaurante()}" class="action-btn">Cadastrar Novo</a>
-                <a href="@{Gerenciamentos.principal}" class="action-btn">Voltar </a>
-            </div>
-            #{/if}
+            #{/if}                         <div class="navigation-buttons">
+                #{if R?.id}                 <a href="@{Restaurantes.formCadastrarRestaurante()}" class="action-btn">Cadastrar Novo</a>
+                #{/if}                 <a href="@{Restaurantes.listar2(null)}" class="action-btn">Voltar para Lista</a>             </div>
         </div>
     </main>
 </body>
