@@ -31,11 +31,11 @@
             </div>
         </nav>
         </div>
-        <div>
-            <h1>Os Melhores Sabores da Cidade</h1>
-            <p class="slogan">Descubra restaurantes por categoria e encontre o seu próximo prato favorito.</p>
-        </div>
     </header>
+    <div>
+        <h1>Os Melhores Sabores da Cidade</h1>
+        <p class="slogan">Descubra restaurantes por categoria e encontre o seu próximo prato favorito.</p>
+    </div>
 
     <div class="separator"></div>
     
@@ -43,17 +43,11 @@
         <h2><i class="fas fa-store"></i> Todos os Restaurantes</h2>
         <div class="lista-de-cards">
             
-            #{list items:restaurantes, as:'rest'}
+           #{list items:restaurantes, as:'rest'}
             <div class="restaurante-card">
                 
                 <div class="foto-container">
-                    #{if rest.imagem?.exists()}
-                        <img src="@{Restaurantes.getImagem(id:rest.id)}" alt="${rest.nomeDoRestaurante}">
-                    #{/if}
-                    #{else}
-                        <img src="https://via.placeholder.com/400x160/A34E2B/FFFFFF?text=${rest.nomeDoRestaurante?.replaceAll(' ', '+') ?: 'Restaurante'}" alt="${rest.nomeDoRestaurante}">
-                    #{/else}
-                </div>
+                    </div>
                 
                 <div class="info-e-acoes">
                     <h3 class="nome-restaurante">${rest.nomeDoRestaurante}</h3>
@@ -64,7 +58,8 @@
                         
                         %{
                             // Lógica para verificar se o restaurante já está favoritado
-                            isFavorito = clienteConectado != null && clienteConectado.restaurantes.contains(rest);
+                            // Garante que clienteConectado e sua lista restaurantes não são nulos antes de verificar
+                            isFavorito = clienteConectado != null && clienteConectado.restaurantes != null && clienteConectado.restaurantes.contains(rest);
                         }%
 
                         #{if clienteConectado}
@@ -80,7 +75,10 @@
                                 <i class="far fa-star"></i>
                             </button>
                         #{/else}
-                        </div> </div> </div> #{/list}
+                    </div> 
+                </div> 
+            </div> 
+            #{/list}
             
             #{if restaurantes.isEmpty()}
                 <p>Nenhum restaurante ativo encontrado.</p>
