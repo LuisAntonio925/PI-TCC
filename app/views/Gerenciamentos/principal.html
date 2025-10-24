@@ -20,8 +20,8 @@
                         <i class="fa-solid fa-user"></i>
                     </a>
                     <div class="user-dropdown">
-                        #{if clienteAtual}  
-                            <span class="dropdown-user-name">Olá, ${clienteAtual.nome}</span>
+                        #{if clienteAtual} 
+                            <span class="dropdown-user-name">Olá, ${clienteAtual.nome}</span> 
                         #{/if}
                         <a href="@{ClientesPerfil.perfil}">Perfil</a>
                         <a href="@{Gerenciamentos.ListasDeGerenciamentos}">Configurações</a>

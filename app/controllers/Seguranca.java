@@ -2,6 +2,7 @@ package controllers;
 
 import models.Cliente;
 import models.Perfil; // Certifique-se que este import existe
+import play.Logger;
 import play.mvc.Before;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -61,11 +62,30 @@ public class Seguranca extends Controller {
 
 
 	// Método auxiliar para pegar o cliente logado (mantido como antes)
-	 static Cliente getClienteConectado() {
-        if (session.contains("clienteId")) {
-            Long clienteId = Long.parseLong(session.get("clienteId"));
-            return Cliente.findById(clienteId);
+	 // Em Seguranca.java
+static Cliente getClienteConectado() {
+    if (session.contains("clienteId")) {
+        String clienteIdStr = session.get("clienteId"); // Pega como String
+        Logger.info("Encontrado clienteId na sessão: %s", clienteIdStr); // Log 1
+        try {
+            Long clienteId = Long.parseLong(clienteIdStr); // Converte para Long
+            Cliente cliente = Cliente.findById(clienteId); // Busca no banco
+            if (cliente != null) {
+                Logger.info("Cliente %d encontrado no banco.", cliente.id); // Log 2
+            } else {
+                Logger.warn("Cliente com ID %d não encontrado no banco!", clienteId); // Log 3
+            }
+            return cliente;
+        } catch (NumberFormatException e) {
+             Logger.error("clienteId na sessão não é um número válido: %s", clienteIdStr); // Log 4
+             session.remove("clienteId"); // Remove o ID inválido
+             return null;
+        } catch (Exception e) {
+            Logger.error(e, "Erro ao buscar cliente por ID %s", clienteIdStr); // Log 5
+            return null;
         }
-        return null;
     }
+    Logger.info("Nenhum clienteId encontrado na sessão."); // Log 6
+    return null;
+}
 }
