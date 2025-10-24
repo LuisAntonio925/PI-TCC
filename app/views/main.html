@@ -1,46 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-    <head>
-        <title>#{get 'title' /}</title>
-        <meta charset="${_response_encoding}">
-        
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-        
-        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
-        #{get 'moreStyles' /}
-        <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
-        
-        #{if flash.success}
-		<div class="flash-message flash-success">${flash.success}</div>
-		#{/if}
-		
-		#{if flash.error}
-			<div class="flash-message flash-error">${flash.error}</div>
-		#{/if}
-        #{doLayout /}
-		
-        <script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
-        #{get 'moreScripts' /}
-        
-        <script>
-            function toggleUserDropdown(e) {
-                e.preventDefault(); 
-                const userContainer = e.currentTarget.closest('.user-container');
-                userContainer.classList.toggle('active');
-                e.stopPropagation(); 
-            }
+<head>
+    <title>#{get 'title' /}</title>
+    <meta charset="${_response_encoding}">
     
-            window.addEventListener('click', function(e){
-                const userContainer = document.getElementById('userContainer');
-                if(userContainer && !userContainer.contains(e.target)){
-                    userContainer.classList.remove('active');
-                }
-            });
-        </script>
-        
-    </body>
-</html>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
+    #{get 'moreStyles' /}
+    <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
+    
+    <script src="@{'/public/javascripts/jquery-1.6.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+    
+    <script>
+        function toggleUserDropdown(e) {
+            e.preventDefault(); 
+            const userContainer = e.currentTarget.closest('.user-container');
+            userContainer.classList.toggle('active');
+            e.stopPropagation(); 
+        }
+    
+        window.addEventListener('click', function(e){
+            const userContainer = document.getElementById('userContainer');
+            if(userContainer && !userContainer.contains(e.target)){
+                userContainer.classList.remove('active');
+            }
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            // Faz o flash sumir depois de 3 segundos
+            $('.flash-message').delay(3000).fadeOut('slow');
+        });
+    </script>
+    
+    #{get 'moreScripts' /}
+    
+</head>
+
+<body> #{if flash.success}
+        <div class="flash-message flash-success">${flash.success}</div>
+    #{/if}
+    
+    #{if flash.error}
+        <div class="flash-message flash-error">${flash.error}</div>
+    #{/if}
+    
+    #{doLayout /}
+    
+</body> </html>

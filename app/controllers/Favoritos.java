@@ -31,37 +31,32 @@ public class Favoritos extends Controller {
     }
 
     public static void alternarFavorito(Long idRest) {
-    Cliente clienteConectado = Seguranca.getClienteConectado();
-    // ... (verifica se está logado)
-
-    Restaurante restaurante = Restaurante.findById(idRest);
-
-    if (restaurante != null) {
-        // Verifica se já está na lista
-        if (clienteConectado.restaurantes.contains(restaurante)) {
-            // Se estiver, remove
-            clienteConectado.restaurantes.remove(restaurante);
-            flash.success("'%s' foi removido dos seus favoritos.", restaurante.nomeDoRestaurante);
-        } else {
-            // Se não estiver, adiciona
-            clienteConectado.restaurantes.add(restaurante);
-            flash.success("'%s' foi adicionado aos seus favoritos!", restaurante.nomeDoRestaurante);
+        Cliente clienteConectado = Seguranca.getClienteConectado();
+        if (clienteConectado == null) {
+            Logins.form();
         }
 
-        clienteConectado.save(); // Salva a alteração na lista de favoritos do cliente
-        // File: app/controllers/Favoritos.java
+        Restaurante restaurante = Restaurante.findById(idRest);
 
-// ... (método alternarFavorito)
+        if (restaurante != null) {
+            if (clienteConectado.restaurantes.contains(restaurante)) {
+                clienteConectado.restaurantes.remove(restaurante);
+                flash.success("'%s' foi removido dos seus favoritos.", restaurante.nomeDoRestaurante);
+            } else {
+                clienteConectado.restaurantes.add(restaurante);
+                flash.success("'%s' foi adicionado aos seus favoritos!", restaurante.nomeDoRestaurante);
+            }
+            clienteConectado.save();
+        } else {
+             flash.error("Restaurante não encontrado.");
+        }
 
-    if (restaurante != null) {
-        // ... (lógica de adicionar/remover e salvar)
-        clienteConectado.save();
+        // --- ALTERAÇÃO AQUI ---
+        // Redireciona para a página principal após favoritar/desfavoritar
+        Gerenciamentos.principal();
+        // REMOVA ou comente a linha: index();
     }
-    // CORREÇÃO: Agora volta para a página principal (Gerenciamentos.principal)
-    Gerenciamentos.principal();
-}
-index(); // Volta para a página de favoritos
-    }
+
 
     
 }

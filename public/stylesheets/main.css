@@ -24,6 +24,69 @@
     border: 1px solid #b21f2d;
 }
 
+/* 1. Faz o seu header (menu) ser fixo e define sua altura.
+   (Ajuste o 80px para a altura real do seu menu) */
+/* 1. SEU MENU (HEADER) */
+/* Encontre este seletor no seu CSS */
+header.header-content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px; /* (Ajuste a altura se for diferente) */
+    background-color: #fff; /* (Importante para não ser transparente) */
+    
+    /* Defina um z-index alto. Ex: 1000 */
+    z-index: 1000; 
+}
+
+/* 2. MENSAGEM FLASH (CENTRALIZADA) */
+/* Substitua o .flash-message que você tinha por este */
+/* !! ESTE É O BLOCO CORRETO !! */
+
+/* 1. SEU MENU (HEADER) */
+header.header-content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px; 
+    background-color: #fff; 
+    z-index: 1000; 
+}
+
+/* 2. MENSAGEM FLASH (CENTRALIZADA) */
+.flash-message {
+    position: fixed; /* <-- CORRETO */
+    top: 20px; 
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999; /* <-- CORRETO */
+    
+    min-width: 300px; 
+    max-width: 500px;
+    padding: 16px 24px;
+    color: white; 
+    text-align: center;
+    border-radius: 8px; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-sizing: border-box;
+}
+
+/* Cores do flash */
+.flash-success {
+    background-color: #28a745; /* Verde */
+}
+
+.flash-error {
+    background-color: #dc3545; /* Vermelho */
+}
+
+/* 3. CONTEÚDO PRINCIPAL (MAIN) */
+main {
+    padding-top: 80px; /* (Deve ser a mesma altura do seu header) */
+}
+
 /* --- ESTILOS DE ERRO DE VALIDAÇÃO --- */
 
 /* Estiliza a MENSAGEM de erro (ex: "Nome é obrigatório") */

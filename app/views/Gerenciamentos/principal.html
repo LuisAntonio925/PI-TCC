@@ -1,10 +1,9 @@
 #{extends 'main.html' /}
 #{set title:'Lista de Restaurantes' /}
 
-<main>
-    <header class="header-content"> 
-        <div class="nav-padding">
-             <nav class="ifood-nav">
+<header class="header-content"> 
+    <div class="nav-padding">
+        <nav class="ifood-nav">
             <a href="@{Gerenciamentos.ListasDeGerenciamentos}" class="app-logo">RestApp</a>
             <div class="search-bar"></div> 
             <div class="action-icons">
@@ -15,27 +14,34 @@
                 <a href="@{favoritos.index}" title="Lista de Restaurantes">
                     <i class="fa-solid fa-store-alt"></i>
                 </a>
+                
                 <div class="user-container" id="userContainer">
                     <a href="#" class="user-icon" onclick="toggleUserDropdown(event)">
                         <i class="fa-solid fa-user"></i>
                     </a>
                     <div class="user-dropdown">
-                        #{if clienteConectado}
-                            <span class="dropdown-user-name">Olá, ${clienteConectado.nome}</span>
+                        #{if clienteAtual}  
+                            <span class="dropdown-user-name">Olá, ${clienteAtual.nome}</span>
                         #{/if}
                         <a href="@{ClientesPerfil.perfil}">Perfil</a>
                         <a href="@{Gerenciamentos.ListasDeGerenciamentos}">Configurações</a>
                         <a href="@{Logins.logout}">Sair</a>
                     </div>
+                   
                 </div>
-            </div>
+                </div>
+                </div>
         </nav>
-        </div>
-        <div>
-            <h1>Os Melhores Sabores da Cidade</h1>
-            <p class="slogan">Descubra restaurantes por categoria e encontre o seu próximo prato favorito.</p>
-        </div>
-    </header>
+    </div>
+</header>
+
+
+<main>
+
+    <div>
+        <h1>Os Melhores Sabores da Cidade</h1>
+        <p class="slogan">Descubra restaurantes por categoria e encontre o seu próximo prato favorito.</p>
+    </div>
 
     <div class="separator"></div>
     
@@ -45,7 +51,6 @@
             
             #{list items:restaurantes, as:'rest'}
             <div class="restaurante-card">
-                
                 <div class="foto-container">
                     #{if rest.imagem?.exists()}
                         <img src="@{Restaurantes.getImagem(id:rest.id)}" alt="${rest.nomeDoRestaurante}">
@@ -54,25 +59,16 @@
                         <img src="https://via.placeholder.com/400x160/A34E2B/FFFFFF?text=${rest.nomeDoRestaurante?.replaceAll(' ', '+') ?: 'Restaurante'}" alt="${rest.nomeDoRestaurante}">
                     #{/else}
                 </div>
-                
                 <div class="info-e-acoes">
                     <h3 class="nome-restaurante">${rest.nomeDoRestaurante}</h3>
                     <span class="categoria"><i class="fas fa-tag"></i> ${rest.categoria}</span>
-                    
                     <div class="botoes-acao">
                         <a href="#" class="btn-acessar">Acessar</a> 
                         
-                        %{
-                            // Lógica para verificar se o restaurante já está favoritado
-                            isFavorito = clienteConectado != null && clienteConectado.restaurantes.contains(rest);
-                        }%
-
                         #{if clienteConectado}
-                            <a href="@{Favoritos.alternarFavorito(rest.id)}" 
-                               class="btn-favoritar ${isFavorito ? 'favorito' : ''}" 
-                               title="${isFavorito ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}">
-                                
-                                <i class="${isFavorito ? 'fas fa-star' : 'far fa-star'}"></i> 
+                            <a href="@{Favoritos.alternarFavorito(rest.id)}"
+                               class="btn-favoritar ${clienteConectado.restaurantes.contains(rest) ? 'favorito' : ''}">
+                                <i class="${clienteConectado.restaurantes.contains(rest) ? 'fas fa-star' : 'far fa-star'}"></i>
                             </a>
                         #{/if}
                         #{else}
@@ -80,7 +76,10 @@
                                 <i class="far fa-star"></i>
                             </button>
                         #{/else}
-                        </div> </div> </div> #{/list}
+                    </div>
+                </div>
+            </div>
+            #{/list}
             
             #{if restaurantes.isEmpty()}
                 <p>Nenhum restaurante ativo encontrado.</p>
@@ -93,5 +92,4 @@
         <p>Seu restaurante não está aqui? Cadastre-se agora!</p>
         <a href="@{restaurantes.formCadastrarRestaurante}" class="btn-cadastrar-restaurante">Cadastrar Meu Restaurante</a>
     </div>
-
 </main>
