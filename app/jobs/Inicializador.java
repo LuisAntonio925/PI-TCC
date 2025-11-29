@@ -27,7 +27,16 @@ public class Inicializador extends Job {
 			pedro.email = "admin@restapp.com";
 			pedro.setSenha("12345");
 			pedro.perfil = Perfil.ADMINISTRADOR;
-			pedro.save();		
+			pedro.save();	
+			
+			Cliente luana = new Cliente();
+			luana.nome = "luana";
+			luana.email = "admin26@restapp.com";
+			luana.setSenha("1234567");
+			luana.perfil = Perfil.ADMINISTRADOR;
+			luana.save();		
+		
+	
 		}
 			
 		

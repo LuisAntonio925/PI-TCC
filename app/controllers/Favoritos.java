@@ -3,7 +3,7 @@ package controllers;
 import models.Cliente;
 import models.Restaurante;
 import models.Status;
-import play.Logger; // Importar o Logger
+import play.Logger;
 import play.mvc.Controller;
 import play.mvc.With;
 import java.util.List;
@@ -16,7 +16,7 @@ public class Favoritos extends Controller {
 
         if (clienteConectado == null) {
             Logins.form();
-            return; // Adicionado return para parar a execução aqui
+            return;
         }
 
         List<Restaurante> meusFavoritos = clienteConectado.restaurantes;
@@ -27,57 +27,68 @@ public class Favoritos extends Controller {
             clienteConectado
         ).fetch();
 
-        render(meusFavoritos, outrosRestaurantes, clienteConectado); // Passa clienteConectado para a view index tbm
+        render(meusFavoritos, outrosRestaurantes, clienteConectado);
     }
 
+    // Mantive o método antigo caso precise dele em algum lugar sem AJAX
     public static void alternarFavorito(Long idRest) {
         Cliente clienteConectado = Seguranca.getClienteConectado();
         if (clienteConectado == null) {
-            Logger.warn("Cliente não conectado tentando favoritar (Redirecionando para login).");
             flash.error("Você precisa estar logado para favoritar.");
             Logins.form();
-            return; // Importante parar aqui
+            return;
         }
 
         Restaurante restaurante = Restaurante.findById(idRest);
 
         if (restaurante != null) {
-            Logger.info("Alternando favorito para Rest ID: %d, Cliente ID: %d", idRest, clienteConectado.id);
-            
-            boolean jaFavorito = clienteConectado.restaurantes.contains(restaurante); 
-            Logger.info("Restaurante estava nos favoritos? %s", jaFavorito);
-
-            if (jaFavorito) {
-                clienteConectado.restaurantes.remove(restaurante); // Remove da lista na memória
-                flash.success("'%s' foi removido dos seus favoritos.", restaurante.nomeDoRestaurante);
-                Logger.info("Removido. Lista na memória agora tem %d itens.", clienteConectado.restaurantes.size());
+            if (clienteConectado.restaurantes.contains(restaurante)) {
+                clienteConectado.restaurantes.remove(restaurante);
+                flash.success("'%s' foi removido dos favoritos.", restaurante.nomeDoRestaurante);
             } else {
-                clienteConectado.restaurantes.add(restaurante); // Adiciona na lista na memória
-                flash.success("'%s' foi adicionado aos seus favoritos!", restaurante.nomeDoRestaurante);
-                Logger.info("Adicionado. Lista na memória agora tem %d itens.", clienteConectado.restaurantes.size());
+                clienteConectado.restaurantes.add(restaurante);
+                flash.success("'%s' foi adicionado aos favoritos!", restaurante.nomeDoRestaurante);
             }
-
-            try {
-                // Salva o objeto Cliente. Isso deve persistir a mudança na relação ManyToMany.
-                clienteConectado.save(); 
-                Logger.info("Cliente %d salvo com sucesso.", clienteConectado.id);
-            } catch (Exception e) {
-                 Logger.error(e, "Erro ao salvar cliente %d após alternar favorito %d.", clienteConectado.id, restaurante.id);
-                 flash.error("Ocorreu um erro ao salvar o favorito.");
-                 // Redireciona mesmo com erro para não prender o usuário
-                 Gerenciamentos.principal(); // Redireciona de volta para a principal
-                 return; // Importante parar aqui em caso de erro
-            }
-
+            clienteConectado.save();
         } else {
             flash.error("Restaurante não encontrado.");
-            Logger.warn("Tentativa de alternar favorito para restaurante inexistente ID: %d", idRest);
+        }
+        Gerenciamentos.principal(); 
+    }
+
+    /**
+     * NOVO MÉTODO: Manipulação via AJAX (Javascript).
+     * Retorna JSON true/false em vez de recarregar a página.
+     */
+    public static void favoritarAjax(Long idRest) {
+        Cliente clienteConectado = Seguranca.getClienteConectado();
+        
+        // Retorna erro 401 se não estiver logado, para o JS tratar
+        if (clienteConectado == null) {
+            response.status = 401; 
+            renderText("Não autorizado");
+            return;
         }
 
-        // --- PONTO CRÍTICO ---
-        // Redireciona DE VOLTA para a página principal após a ação
-        Logger.info("Redirecionando para Gerenciamentos.principal().");
-        Gerenciamentos.principal(); 
-        // --- Garanta que NÃO HÁ um index() aqui ---
+        Restaurante restaurante = Restaurante.findById(idRest);
+        if (restaurante == null) {
+            notFound();
+        }
+
+        boolean agoraEhFavorito;
+        
+        // Lógica de alternar (toggle)
+        if (clienteConectado.restaurantes.contains(restaurante)) {
+            clienteConectado.restaurantes.remove(restaurante);
+            agoraEhFavorito = false; // Removeu
+        } else {
+            clienteConectado.restaurantes.add(restaurante);
+            agoraEhFavorito = true; // Adicionou
+        }
+        
+        clienteConectado.save();
+
+        // Retorna apenas o booleano para o Javascript atualizar o ícone
+        renderJSON(agoraEhFavorito);
     }
 }
