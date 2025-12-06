@@ -4,14 +4,14 @@
 <header class="header-content"> 
     <div class="nav-padding">
         <nav class="ifood-nav">
-            <a href="@{Gerenciamentos.ListasDeGerenciamentos}" class="app-logo">RestApp</a>
+            <a href="@{Gerenciamentos.ListasDeGerenciamentos()}" class="app-logo">RestApp</a>
             <div class="search-bar"></div> 
             <div class="action-icons">
-                <a href="@{Gerenciamentos.principal}" class="functions-btn">
+                <a href="@{Gerenciamentos.principal()}" class="functions-btn">
                     <i class="fa-solid fa-house"></i>
                     <span>Início</span>
                 </a>
-                <a href="@{favoritos.index}" title="Lista de Restaurantes">
+                <a href="@{Favoritos.index()}" title="Lista de Restaurantes">
                     <i class="fa-solid fa-store-alt"></i>
                 </a>
                 
@@ -20,24 +20,20 @@
                         <i class="fa-solid fa-user"></i>
                     </a>
                     <div class="user-dropdown">
-                        #{if clienteAtual} 
-                            <span class="dropdown-user-name">Olá, ${clienteAtual.nome}</span> 
+                        #{if clienteConectado} 
+                            <span class="dropdown-user-name">Olá, ${clienteConectado.nome}</span> 
                         #{/if}
-                        <a href="@{ClientesPerfil.perfil}">Perfil</a>
-                        <a href="@{Gerenciamentos.ListasDeGerenciamentos}">Configurações</a>
-                        <a href="@{Logins.logout}">Sair</a>
+                        <a href="@{ClientesPerfil.perfil()}">Perfil</a>
+                        <a href="@{Gerenciamentos.ListasDeGerenciamentos()}">Configurações</a>
+                        <a href="@{Logins.logout()}">Sair</a>
                     </div>
-                   
                 </div>
-                </div>
-                </div>
+            </div>
         </nav>
     </div>
 </header>
 
-
 <main>
-
     <div>
         <h1>Os Melhores Sabores da Cidade</h1>
         <p class="slogan">Descubra restaurantes por categoria e encontre o seu próximo prato favorito.</p>
@@ -52,10 +48,12 @@
             #{list items:restaurantes, as:'rest'}
             <div class="restaurante-card">
                 <div class="foto-container">
-                    #{if rest.imagem?.exists()}
-                        <img src="@{Restaurantes.getImagem(id:rest.id)}" alt="${rest.nomeDoRestaurante}">
+                    <!-- LÓGICA CORRIGIDA PARA EXIBIR IMAGEM -->
+                    #{if rest.temFoto()}
+                        <img src="/uploads/${rest.id}/${rest.fotos[0].nome}" alt="${rest.nomeDoRestaurante}">
                     #{/if}
                     #{else}
+                        <!-- Imagem placeholder se não houver foto -->
                         <img src="https://via.placeholder.com/400x160/A34E2B/FFFFFF?text=${rest.nomeDoRestaurante?.replaceAll(' ', '+') ?: 'Restaurante'}" alt="${rest.nomeDoRestaurante}">
                     #{/else}
                 </div>
@@ -67,7 +65,7 @@
                         
                         #{if clienteConectado}
                             <a href="@{Favoritos.alternarFavorito(rest.id)}"
-                               class="btn-favoritar ${clienteConectado.restaurantes.contains(rest) ? 'favorito' : ''}">
+                                class="btn-favoritar ${clienteConectado.restaurantes.contains(rest) ? 'favorito' : ''}">
                                 <i class="${clienteConectado.restaurantes.contains(rest) ? 'fas fa-star' : 'far fa-star'}"></i>
                             </a>
                         #{/if}
@@ -90,6 +88,6 @@
 
     <div class="card-cadastro">
         <p>Seu restaurante não está aqui? Cadastre-se agora!</p>
-        <a href="@{restaurantes.formCadastrarRestaurante}" class="btn-cadastrar-restaurante">Cadastrar Meu Restaurante</a>
+        <a href="@{Restaurantes.formCadastrarRestaurante()}" class="btn-cadastrar-restaurante">Cadastrar Meu Restaurante</a>
     </div>
 </main>

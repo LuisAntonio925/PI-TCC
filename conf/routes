@@ -20,7 +20,7 @@ GET     /favicon.ico                            404
 
 # Map static resources
 GET     /public/                                staticDir:public
-
+GET     /uploads/                                staticDir:uploads
 
 # Catch all (DEVE SER A ÚLTIMA ROTA)
 * /{controller}/{action}                  {controller}.{action}

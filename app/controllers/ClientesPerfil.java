@@ -27,6 +27,7 @@ public class ClientesPerfil extends Controller{
          Cliente clienteLogado = Seguranca.getClienteConectado();
         if(clienteLogado == null){
             Logins.form();
+            return;
         }
         // *** ADICIONAR VALIDAÇÃO DE EMAIL ÚNICO (se necessário) ***
         // É importante garantir que o novo email não esteja em uso por outro cliente.
@@ -43,11 +44,12 @@ public class ClientesPerfil extends Controller{
             params.flash();
             validation.keep();
             editarPerfil();
+            return;
         }
 
         clienteLogado.nome = cliente.nome;
-        clienteLogado.nome = cliente.email;
-        clienteLogado.nome = cliente.telefone;
+        clienteLogado.email = cliente.email;
+        clienteLogado.telefone = cliente.telefone;
         String novaSenha = params.get("senha");
 
         if(novaSenha != null && !novaSenha.isEmpty()){
