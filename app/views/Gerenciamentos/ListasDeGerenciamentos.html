@@ -1,43 +1,151 @@
+
+
 #{extends 'main.html' /}
-#{set title:'Lista de clientes' /}
+#{set title:'Painel de Gerenciamento' /}
 
+<style>
+    /* Container Centralizado */
+    .painel-container {
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        gap: 50px;
+        flex-wrap: wrap;
+        max-width: 1000px;
+        width: 100%;
+        /* AQUI: Reduzi a margem superior de 40px para 10px */
+        margin: 2px auto 10px auto; 
+        padding: 0 20px;
+    }
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nome do Seu Serviço</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    /* ... (resto do CSS dos cards e botões continua igual) ... */
+    .card-painel {
+        background-color: #ffffff;
+        border: 1px solid #E0D3C7;
+        border-radius: 16px;
+        padding: 50px 30px;
+        text-align: center;
+        width: 100%;
+        max-width: 380px;
+        box-shadow: 0 10px 30px rgba(163, 78, 43, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-</head>
-<body>
-   
-    <header class="header"> <h1>RestApp</h1>
-        <p class="slogan">Gerencie clientes e restaurantes com facilidade e eficiência.</p>
-    </header>
+    .card-painel:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(163, 78, 43, 0.15);
+        border-color: #A34E2B;
+    }
 
-    <div class="separator"></div>
+    .card-painel i {
+        font-size: 4.5em;
+        color: #D4A373;
+        margin-bottom: 25px;
+        transition: color 0.3s;
+    }
 
-    <main> 
-          
-            <div class="card">
-                <i class="fas fa-clipboard-list icon"></i>
-                <h2>Lista de Clientes</h2>
-                <p>Visualize uma lista completa de todos os clientes registrados, com filtros e opções de busca.</p>
-                <a href="@{gerenciamentos.listar}">
-                <button >Ver Lista</button>
-                </a>
-            </div>
+    .card-painel:hover i { color: #A34E2B; }
 
-            <div class="card">
-                <i class="fas fa-utensils icon"></i>
-                <h2>Lista de Restaurantes</h2>
-                <p>Explore a lista de todos os restaurantes parceiros, seus status e informações de contato.</p>
-                <a href="@{restaurantes.listar2}">
-                <button >Ver Lista</button>
-                </a>
-				</div>
+    .card-painel h2 {
+        font-family: 'Playfair Display', serif;
+        color: #A34E2B;
+        font-size: 2.2em;
+        margin-bottom: 15px;
+    }
 
+    .card-painel p {
+        color: #8C6A5A;
+        font-size: 1.1em;
+        line-height: 1.6;
+        margin-bottom: 40px;
+        flex-grow: 1;
+    }
+
+    .btn-painel {
+        background-color: #A34E2B;
+        color: white;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-size: 1.1em;
+        font-weight: 700;
+        text-decoration: none;
+        transition: background-color 0.3s, transform 0.2s;
+        display: inline-block;
+        border: none;
+        cursor: pointer;
+        width: 80%;
+        box-shadow: 0 4px 15px rgba(163, 78, 43, 0.2);
+    }
+
+    .btn-painel:hover {
+        background-color: #8F3E22;
+        transform: translateY(-3px);
+        color: white;
+        text-decoration: none;
+        box-shadow: 0 6px 20px rgba(163, 78, 43, 0.3);
+    }
+    
+    .btn-voltar {
+        width: auto;
+        padding: 12px 35px;
+        background-color: #8C6A5A;
+        /* AQUI: Reduzi a margem superior do botão voltar */
+        margin-top: 20px; 
+        margin-bottom: 60px;
+    }
+    
+    .btn-voltar:hover { background-color: #A34E2B; }
+    
+    /* AQUI: Ajuste no Separador para diminuir espaço */
+    .separator-custom {
+        width: 80px;
+        height: 4px;
+        background-color: #D4A373;
+        /* Reduzi a margem inferior de 50px para 30px */
+        margin: 0 auto 30px auto; 
+        border-radius: 2px;
+    }
+</style>
+
+<header class="header"> 
+    <h1>RestApp</h1>
+    <p class="slogan">Gerencie clientes e restaurantes com facilidade e eficiência.</p>
+</header>
+
+<!-- Substituí a classe padrão .separator por uma customizada com menos margem -->
+<div class="separator-custom"></div>
+
+<main> 
+      <div class="painel-container"> 
+      
+        <!-- Card Clientes -->
+        <div class="card-painel">
+            <i class="fas fa-clipboard-list"></i>
+            <h2>Lista de Clientes</h2>
+            <p>Visualize e gerencie a base completa de clientes cadastrados no sistema.</p>
+            <a href="@{gerenciamentos.listar}" style="width: 100%;">
+                <button class="btn-painel">Acessar Lista</button>
+            </a>
+        </div>
+
+        <!-- Card Restaurantes -->
+        <div class="card-painel">
+            <i class="fas fa-utensils"></i>
+            <h2>Restaurantes</h2>
+            <p>Monitore os restaurantes parceiros, verifique status e adicione novos estabelecimentos.</p>
+            <a href="@{restaurantes.listar2}" style="width: 100%;">
+                <button class="btn-painel">Acessar Lista</button>
+            </a>
+        </div>
+
+     </div>
+</main>
+
+<div style="text-align: center;">
+    <a href="@{Gerenciamentos.principal()}" class="btn-painel btn-voltar">
+        <i class="fas fa-arrow-left"></i> Voltar ao Início
+    </a>
+</div>

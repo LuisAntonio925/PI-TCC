@@ -17,8 +17,9 @@
 
 <div class="separator list-separator"></div>
 
-<main class="list-main">
-    <div class="client-list-section favoritos-section">
+<main> <!-- Removi a classe list-main para usar largura total -->
+    
+    <div class="categoria-restaurantes">
         <h2><i class="fas fa-heart"></i> Meus Favoritos</h2>
         
         #{if meusFavoritos.isEmpty()}
@@ -27,25 +28,37 @@
             </div>
         #{/if}
         #{else}
-            <ul>
+            <!-- AQUI: Usando a mesma estrutura da principal -->
+            <div class="lista-de-cards">
                 #{list items:meusFavoritos, as:'rest'}
-                <li class="client-item">
-                    <div class="client-info">
-                        <span class="name">${rest.nomeDoRestaurante}</span>
-                        <span class="contact"><i class="fas fa-tag"></i> ${rest.categoria}</span>
+                <div class="restaurante-card">
+                    <div class="foto-container">
+                        #{if rest.temFoto()}
+                            <img src="/uploads/${rest.id}/${rest.fotos[0].nome}" alt="${rest.nomeDoRestaurante}">
+                        #{/if}
+                        #{else}
+                            <img src="https://via.placeholder.com/400x160/A34E2B/FFFFFF?text=${rest.nomeDoRestaurante?.replaceAll(' ', '+') ?: 'Restaurante'}" alt="${rest.nomeDoRestaurante}">
+                        #{/else}
                     </div>
-                    <div class="client-actions">
-                        <a href="@{Favoritos.alternarFavorito(rest.id)}" class="action-btn unfavorite-btn">
-                            <i class="fas fa-heart-crack"></i> Remover
-                        </a>
+                    <div class="info-e-acoes">
+                        <h3 class="nome-restaurante">${rest.nomeDoRestaurante}</h3>
+                        <span class="categoria"><i class="fas fa-tag"></i> ${rest.categoria}</span>
+                        <div class="botoes-acao">
+                            <!-- Botão remover favorito -->
+                            <a href="@{Favoritos.alternarFavorito(rest.id)}" class="btn-favoritar favorito" title="Remover dos favoritos">
+                                <i class="fas fa-heart"></i>
+                            </a>
+                        </div>
                     </div>
-                </li>
+                </div>
                 #{/list}
-            </ul>
+            </div>
         #{/else}
     </div>
 
-    <div class="client-list-section">
+    <div class="separator" style="margin-top: 50px;"></div>
+
+    <div class="categoria-restaurantes">
         <h2><i class="fas fa-store"></i> Descubra Novos Restaurantes</h2>
 
         #{if outrosRestaurantes.isEmpty()}
@@ -54,21 +67,30 @@
             </div>
         #{/if}
         #{else}
-            <ul>
+            <div class="lista-de-cards">
                 #{list items:outrosRestaurantes, as:'rest'}
-                <li class="client-item">
-                    <div class="client-info">
-                        <span class="name">${rest.nomeDoRestaurante}</span>
-                        <span class="contact"><i class="fas fa-tag"></i> ${rest.categoria}</span>
+                <div class="restaurante-card">
+                    <div class="foto-container">
+                        #{if rest.temFoto()}
+                            <img src="/uploads/${rest.id}/${rest.fotos[0].nome}" alt="${rest.nomeDoRestaurante}">
+                        #{/if}
+                        #{else}
+                            <img src="https://via.placeholder.com/400x160/A34E2B/FFFFFF?text=${rest.nomeDoRestaurante?.replaceAll(' ', '+') ?: 'Restaurante'}" alt="${rest.nomeDoRestaurante}">
+                        #{/else}
                     </div>
-                    <div class="client-actions">
-                        <a href="@{Favoritos.alternarFavorito(rest.id)}" class="action-btn favorite-btn">
-                            <i class="fas fa-heart"></i> Favoritar
-                        </a>
+                    <div class="info-e-acoes">
+                        <h3 class="nome-restaurante">${rest.nomeDoRestaurante}</h3>
+                        <span class="categoria"><i class="fas fa-tag"></i> ${rest.categoria}</span>
+                        <div class="botoes-acao">
+                            <!-- Botão adicionar favorito -->
+                            <a href="@{Favoritos.alternarFavorito(rest.id)}" class="btn-favoritar" title="Adicionar aos favoritos">
+                                <i class="far fa-heart"></i>
+                            </a>
+                        </div>
                     </div>
-                </li>
+                </div>
                 #{/list}
-            </ul>
+            </div>
         #{/else}
     </div>
 </main>

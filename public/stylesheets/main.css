@@ -1,133 +1,3 @@
-.flash-message {
-    width: 100%;
-    max-width: 800px; /* Mesmo tamanho do .list-main */
-    padding: 18px 25px;
-    margin: 0 auto 25px auto; /* Centralizado e com espaço abaixo */
-    border-radius: 10px;
-    font-size: 1.1em;
-    font-weight: 600;
-    color: var(--text-light);
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    box-sizing: border-box;
-    position: relative; /* Ajuste para o body.nav-padding */
-    top: 20px;
-}
-
-.flash-message.flash-success {
-    background-color: var(--success-color); /* Verde do seu tema */
-    border: 1px solid #1e7e34;
-}
-
-.flash-message.flash-error {
-    background-color: var(--error-color); /* Vermelho do seu tema */
-    border: 1px solid #b21f2d;
-}
-
-/* 1. Faz o seu header (menu) ser fixo e define sua altura.
-   (Ajuste o 80px para a altura real do seu menu) */
-/* 1. SEU MENU (HEADER) */
-/* Encontre este seletor no seu CSS */
-header.header-content {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 80px; /* (Ajuste a altura se for diferente) */
-    background-color: #fff; /* (Importante para não ser transparente) */
-    
-    /* Defina um z-index alto. Ex: 1000 */
-    z-index: 1000; 
-}
-
-/* 2. MENSAGEM FLASH (CENTRALIZADA) */
-/* Substitua o .flash-message que você tinha por este */
-/* !! ESTE É O BLOCO CORRETO !! */
-
-/* 1. SEU MENU (HEADER) */
-header.header-content {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 80px; 
-    background-color: #fff; 
-    z-index: 1000; 
-}
-
-/* 2. MENSAGEM FLASH (CENTRALIZADA) */
-.flash-message {
-    position: fixed; /* <-- CORRETO */
-    top: 20px; 
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999; /* <-- CORRETO */
-    
-    min-width: 300px; 
-    max-width: 500px;
-    padding: 16px 24px;
-    color: white; 
-    text-align: center;
-    border-radius: 8px; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    box-sizing: border-box;
-}
-
-/* Cores do flash */
-.flash-success {
-    background-color: #28a745; /* Verde */
-}
-
-.flash-error {
-    background-color: #dc3545; /* Vermelho */
-}
-
-/* 3. CONTEÚDO PRINCIPAL (MAIN) */
-main {
-    padding-top: 80px; /* (Deve ser a mesma altura do seu header) */
-}
-
-/* --- ESTILOS DE ERRO DE VALIDAÇÃO --- */
-
-/* Estiliza a MENSAGEM de erro (ex: "Nome é obrigatório") */
-/* O Play cria esta classe automaticamente com a tag #{error} */
-.error {
-    color: var(--error-color); /* Usa seu vermelho - #dc3545 */
-    font-size: 0.9em;
-    font-weight: 600;
-    display: block; /* Para ocupar a linha */
-    margin-top: 5px; /* Espaço acima da mensagem */
-    text-align: left; /* Garante alinhamento com o label */
-}
-
-/* Estiliza o CAMPO (input, select) que deu erro */
-/* O Play adiciona 'hasError' ao div pai (usado na view com a tag #{field}) */
-.hasError input[type="text"],
-.hasError input[type="email"],
-.hasError input[type="password"],
-.hasError select {
-    border-color: var(--error-color) !important; /* Borda vermelha */
-    background-color: #fff8f8; /* Um fundo levemente rosado */
-}
-
-/* Destaque no focus para o campo com erro */
-.hasError input[type="text"]:focus,
-.hasError input[type="email"]:focus,
-.hasError input[type="password"]:focus,
-.hasError select:focus {
-     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2); /* Sombra vermelha suave */
-}
-
-/* Estilo para o bloco geral de erros (ul/li gerado por #{errors}) */
-.alert.alert-danger ul {
-    margin-top: 5px;
-    margin-bottom: 0;
-    padding-left: 20px; /* Indenta a lista de erros */
-}
-.alert.alert-danger li {
-    margin-bottom: 3px;
-}
-
 /*
 |==========================================================================
 | 0. VARIÁVEIS DE TEMA E BASE
@@ -177,7 +47,29 @@ body.list-page {
     padding: 40px 20px; /* Padding para listagens/formulários */
 }
 
+/* ==========================================================================
+   1. SEU MENU (HEADER)
+   ========================================================================== */
+header.header-content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px; /* (Ajuste a altura se for diferente) */
+    background-color: #fff; /* (Importante para não ser transparente) */
+    z-index: 1000;
+    text-align: center; /* Herdado do seu código antigo */
+}
+/* Estilos internos do header */
+.header-content h1 { 
+    font-size: 3.5em; 
+    margin: 0;
+}
+.header-content p.slogan { 
+    font-size: 1.2em;
+}
 
+/* Header padrão (para outras páginas que não usam header-content fixo) */
 .header {
     width: 100%;
     max-width: 1200px; /* Padrão */
@@ -186,7 +78,6 @@ body.list-page {
     padding: 20px 0;
 }
 
-/* Overrides para listagem/formulário */
 .header.list-header {
     max-width: 800px;
     margin-bottom: 40px; 
@@ -226,13 +117,45 @@ body.list-page {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Override para listagem/formulário */
 .separator.list-separator {
     width: 70px;
     margin: 0 auto 50px auto; 
 }
 
-main { 
+/* ==========================================================================
+   2. MENSAGEM FLASH (CORRIGIDA)
+   ========================================================================== */
+.flash-message {
+    position: fixed; 
+    top: 20px; 
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999; 
+    
+    min-width: 300px; 
+    max-width: 500px;
+    padding: 16px 24px;
+    color: white; 
+    text-align: center;
+    border-radius: 8px; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-sizing: border-box;
+}
+
+/* Cores do flash */
+.flash-success {
+    background-color: #28a745; /* Verde */
+}
+
+.flash-error {
+    background-color: #dc3545; /* Vermelho */
+}
+
+/* ==========================================================================
+   3. CONTEÚDO PRINCIPAL (MAIN)
+   ========================================================================== */
+main {
+    padding-top: 80px; /* (Deve ser a mesma altura do seu header) */
     width: 100%;
     max-width: 1200px; /* Padrão */
     display: flex;
@@ -240,7 +163,6 @@ main {
     align-items: center;
 }
 
-/* Override para wrapper de listagem/formulário */
 main.list-main {
     max-width: 800px;
     background-color: var(--text-light);
@@ -251,120 +173,44 @@ main.list-main {
     text-align: center;
 }
 
-/*
-|==========================================================================
-| 1. DASHBOARD CARD LAYOUT (principal2.html)
-|==========================================================================
-*/
-
-.container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 30px;
-    max-width: 1200px;
-    width: 100%;
-    margin-top: 20px;
-}
-
-.card {
-    background-color: var(--text-light);
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    padding: 35px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    min-height: 320px;
-}
-
-.card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
-}
-
-.card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 8px;
-    background-color: var(--primary-color);
-    transform: translateY(-100%);
-    transition: transform 0.3s ease-out;
-}
-
-.card:hover::before {
-    transform: translateY(0);
-}
-
-.card .icon {
-    font-size: 3.5em;
-    color: var(--secondary-color);
-    margin-bottom: 20px;
-    transition: color 0.3s ease;
-}
-
-.card:hover .icon {
-    color: var(--primary-color);
-}
-
-.card h2 {
-    font-family: 'Playfair Display', serif;
-    color: var(--primary-color);
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 2em;
-}
-
-.card p {
-    color: var(--tertiary-color);
-    font-size: 1.1em;
-    line-height: 1.6;
-    margin-bottom: 30px;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-}
-
-.card a {
-    text-decoration: none;
-    width: 100%;
-}
-
-.card button {
-    background-color: var(--primary-color);
-    color: var(--text-light);
-    border: none;
-    border-radius: 50px;
-    padding: 18px 35px;
-    font-size: 1.2em;
+/* --- ESTILOS DE ERRO DE VALIDAÇÃO --- */
+.error {
+    color: var(--error-color);
+    font-size: 0.9em;
     font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 240px;
-    letter-spacing: 0.5px;
+    display: block; 
+    margin-top: 5px; 
+    text-align: left; 
 }
 
-.card button:hover {
-    background-color: var(--button-hover);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+.hasError input[type="text"],
+.hasError input[type="email"],
+.hasError input[type="password"],
+.hasError select {
+    border-color: var(--error-color) !important; 
+    background-color: #fff8f8; 
 }
 
-/*
-|==========================================================================
-| 2. NAVIGATION/HEADER STYLES (principal.html)
-|==========================================================================
-*/
+.hasError input[type="text"]:focus,
+.hasError input[type="email"]:focus,
+.hasError input[type="password"]:focus,
+.hasError select:focus {
+     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2); 
+}
 
+.alert.alert-danger ul {
+    margin-top: 5px;
+    margin-bottom: 0;
+    padding-left: 20px;
+}
+.alert.alert-danger li {
+    margin-bottom: 3px;
+}
+
+
+/* ==========================================================================
+   4. NAVIGATION / NAVBAR (ifood-nav)
+   ========================================================================== */
 .ifood-nav {
     display: flex;
     justify-content: space-between;
@@ -432,47 +278,22 @@ main.list-main {
 .user-container { position: relative; z-index: 1010; }
 .user-dropdown { display: none; position: absolute; top: 100%; right: 0; margin-top: 10px; background: var(--background-light); border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); min-width: 180px; overflow: hidden; border: 1px solid var(--line-color); }
 .user-container.active .user-dropdown { display: block; }
-.user-dropdown a { padding: 12px 18px; display: block; color: var(--tertiary-color); font-weight: 500; font-size: 0.9em; }
+.user-dropdown a { padding: 12px 18px; display: block; color: var(--tertiary-color); font-weight: 500; font-size: 0.9em; text-decoration: none; }
 .user-dropdown a:hover { background-color: var(--gradient-start); color: var(--primary-color); }
-/* Adicione isso ao seu main.css */
+
 .user-dropdown .dropdown-user-name {
-    padding: 10px 18px; /* Espaçamento similar aos links */
-    display: block;      /* Para ocupar a linha toda */
-    color: var(--tertiary-color); /* Cor do texto */
-    font-weight: 600;     /* Deixar em negrito */
+    padding: 10px 18px; 
+    display: block;      
+    color: var(--tertiary-color); 
+    font-weight: 600;     
     font-size: 0.95em;
-    border-bottom: 1px solid var(--line-color); /* Linha separadora opcional */
-    cursor: default; /* Indicar que não é clicável */
+    border-bottom: 1px solid var(--line-color); 
+    cursor: default; 
 }
 
-/* Ajuste o padding do primeiro link para não ficar colado */
-.user-dropdown a:first-of-type {
-    /* Pode ser necessário ajustar se o primeiro item for o nome */
-}
-.user-dropdown a { /* Mantenha seus estilos existentes para os links */
-    padding: 12px 18px;
-    display: block;
-    color: var(--tertiary-color);
-    font-weight: 500;
-    font-size: 0.9em;
-    text-decoration: none; /* Garanta que não tem sublinhado */
-}
-.user-dropdown a:hover {
-    background-color: var(--gradient-start);
-    color: var(--primary-color);
-}
-
-/* Main Content Wrapper for principal.html */
-.header-content { 
-    text-align: center;
-}
-.header-content h1 { 
-    font-size: 3.5em; 
-    margin: 0;
-}
-.header-content p.slogan { 
-    font-size: 1.2em;
-}
+/* ==========================================================================
+   5. GRID DE RESTAURANTES (NOVO - 4 POR LINHA)
+   ========================================================================== */
 
 .categoria-restaurantes {
     width: 100%;
@@ -491,75 +312,133 @@ main.list-main {
     align-items: center;
 }
 
+/* Container GRID Principal */
 .lista-de-cards {
-    display: flex;
-    flex-wrap: wrap; 
-    gap: 20px; 
-    justify-content: flex-start;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 Colunas Iguais */
+    gap: 30px; 
+    width: 100%;
+    box-sizing: border-box;
 }
 
+/* Card Individual */
 .restaurante-card {
-    width: calc(33.333% - 14px); 
-    min-width: 280px;
-    border-radius: 8px; 
-    overflow: hidden; 
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%; /* Ocupa a célula do grid */
+    min-width: 0; /* Evita estouro */
     background-color: var(--background-light);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     border: 1px solid var(--line-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.restaurante-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(163, 78, 43, 0.15);
+    border-color: #e0d3c7;
+}
+
+/* Imagem do Card */
+.foto-container {
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+    position: relative;
 }
 
 .foto-container img {
     width: 100%;
-    height: 160px;
+    height: 100%;
     object-fit: cover;
+    transition: transform 0.6s ease;
 }
 
+.restaurante-card:hover .foto-container img {
+    transform: scale(1.08);
+}
+
+/* Info e Botões */
 .info-e-acoes {
     padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.nome-restaurante {
+    font-size: 1.3em;
+    color: #333;
+    margin: 0 0 5px 0;
+    font-weight: 700;
+}
+
+.categoria {
+    font-size: 0.9em;
+    color: #888;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.categoria i {
+    margin-right: 5px;
+    color: #A34E2B;
 }
 
 .botoes-acao {
     display: flex;
-    justify-content: space-between; 
+    justify-content: space-between;
     align-items: center;
+    margin-top: auto;
 }
 
+/* Botão Acessar */
 .btn-acessar {
     background-color: var(--primary-color);
     color: var(--text-light);
-    padding: 8px 12px;
-    border-radius: 4px;
+    padding: 8px 16px;
+    border-radius: 50px;
     text-decoration: none;
     font-weight: bold;
     font-size: 0.9em;
-    transition: background-color 0.2s;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
 }
+
 .btn-acessar:hover {
     background-color: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(163, 78, 43, 0.3);
 }
 
-.btn-favoritar { 
-    border: 1px solid var(--line-color); 
-    color: var(--secondary-color); 
-    border-radius: 50%; 
-    width: 35px; 
-    height: 35px; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    cursor: pointer; 
-    transition: all 0.3s ease;
+/* Botão Favoritar */
+.btn-favoritar {
+    background: transparent;
+    border: 1px solid var(--line-color);
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--secondary-color);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.btn-favoritar.favorito,
-.btn-favoritar.favorito i {
-    color: var(--favoritar-star) !important;
+.btn-favoritar:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.btn-favoritar.favorito {
+    background-color: #fff;
     border-color: var(--favoritar-star) !important;
-}
-
-.btn-favoritar i {
-   transition: color 0.3s ease; 
+    color: var(--favoritar-star) !important;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
 }
 
 .card-cadastro { 
@@ -588,12 +467,10 @@ main.list-main {
     background-color: var(--button-hover);
 }
 
-/*
-|==========================================================================
-| 3. LIST PAGE STYLES (listar.html, listar2.html, favoritos/index.html)
-|==========================================================================
-*/
 
+/* ==========================================================================
+   6. ESTILOS DE LISTAGEM E FORMULÁRIOS (GERAL)
+   ========================================================================== */
 .search-form {
     display: flex;
     flex-direction: column;
@@ -649,7 +526,6 @@ main.list-main {
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
-
 
 .client-list-section,
 .restaurant-list-section {
@@ -744,30 +620,13 @@ main.list-main {
     gap: 5px; 
 }
 
-.action-btn i {
-    font-size: 0.8em; 
-}
+.action-btn i { font-size: 0.8em; }
 
-.action-btn.edit-btn {
-    background-color: var(--secondary-color);
-}
+.action-btn.edit-btn { background-color: var(--secondary-color); }
+.action-btn.edit-btn:hover { background-color: #c09068; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); }
 
-.action-btn.edit-btn:hover {
-    background-color: #c09068; /* Darker secondary for hover */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-}
-
-/* Base for removable buttons */
-.action-btn.remove-btn {
-    background-color: var(--error-color);
-}
-
-.action-btn.remove-btn:hover {
-    background-color: #c82333; /* Darker error for hover */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-}
+.action-btn.remove-btn { background-color: var(--error-color); }
+.action-btn.remove-btn:hover { background-color: #c82333; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); }
 
 .no-clients-message,
 .no-restaurants-message {
@@ -807,34 +666,9 @@ main.list-main {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-/* Favorite/Unfavorite Buttons Specific to Favoritos/index.html */
-.action-btn.favorite-btn { 
-    background-color: var(--success-color);
-}
-.action-btn.favorite-btn:hover {
-    background-color: #1e7e34; /* Darker green on hover */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-}
-.action-btn.unfavorite-btn { 
-    background-color: var(--error-color);
-}
-.action-btn.unfavorite-btn:hover {
-    background-color: #c82333; /* Darker red on hover */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-}
-.favoritos-section { 
-    margin-bottom: 50px; 
-}
-
-
-/*
-|==========================================================================
-| 4. FORM/EDIT CLIENT/RESTAURANT SPECIFIC STYLES
-|==========================================================================
-*/
-
+/* ==========================================================================
+   7. FORM CARD STYLES
+   ========================================================================== */
 .form-card {
     background-color: var(--text-light);
     border-radius: 15px;
@@ -869,42 +703,15 @@ main.list-main {
     font-size: 2.5em;
 }
 
-.form-card h3 {
-    font-size: 1.8em;
-    margin-bottom: 20px;
-}
+.form-card h3 { font-size: 1.8em; margin-bottom: 20px; }
 
-.form-group {
-    margin-bottom: 22px; 
-    text-align: left;
-}
-
-.form-error {
-    color: var(--error-color);
-    font-size: 0.9em;
-    font-weight: 600;
-    display: block;
-    margin-top: 5px;
-}
+.form-group { margin-bottom: 22px; text-align: left; }
+.form-error { color: var(--error-color); font-size: 0.9em; font-weight: 600; display: block; margin-top: 5px; }
 
 .form-group input.error,
-.form-group select.error {
-    border-color: var(--error-color);
-    background-color: #fff8f8;
-}
+.form-group select.error { border-color: var(--error-color); background-color: #fff8f8; }
 
-.form-group input.error:focus,
-.form-group select.error:focus {
-     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
-}
-
-.form-group label {
-    display: block;
-    font-size: 1.1em;
-    color: var(--tertiary-color);
-    margin-bottom: 8px;
-    font-weight: 600;
-}
+.form-group label { display: block; font-size: 1.1em; color: var(--tertiary-color); margin-bottom: 8px; font-weight: 600; }
 
 .form-group input[type="text"],
 .form-group input[type="email"],
@@ -921,10 +728,7 @@ main.list-main {
     box-sizing: border-box;
 }
 
-.form-group input[type="text"]:focus,
-.form-group input[type="email"]:focus,
-.form-group input[type="password"]:focus,
-.form-group select:focus {
+.form-group input:focus, .form-group select:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(163, 78, 43, 0.2);
     outline: none;
@@ -959,106 +763,18 @@ main.list-main {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-.form-hint {
-    display: block;
-    color: #888;
-    font-size: 0.9em;
-    margin-top: 5px;
-    text-align: left;
-}
+.form-hint { display: block; color: #888; font-size: 0.9em; margin-top: 5px; text-align: left; }
+.form-separator { margin: 40px 0; border-top: 1px solid var(--line-color); }
+.form-card-secondary { margin-top: 20px; }
 
-.form-separator {
-    margin: 40px 0; 
-    border-top: 1px solid var(--line-color);
-}
-
-.form-card-secondary {
-    margin-top: 20px;
-}
-
-.linked-items-table {
-    width: 100%;
-    text-align: left;
-    border-collapse: collapse;
-}
-
-.linked-item-row {
-    border-bottom: 1px solid #eee;
-}
-
-.linked-item-row:last-child {
-    border-bottom: none;
-}
-
-.linked-item-name {
-    padding: 8px;
-    font-size: 1.0em;
-    color: var(--text-dark);
-}
-
-.linked-item-actions {
-    text-align: right; 
-    padding: 8px;
-}
-
-.remove-link {
-    color: #dc3545;
-    text-decoration: none;
-    font-size: 0.9em;
-    font-weight: 600;
-    transition: color 0.2s ease;
-}
-
-.remove-link:hover {
-    color: #c82333;
-    text-decoration: underline;
-}
-
-.client-list {
-    margin-top: 30px;
-    text-align: left;
-}
-
-.client-list h3 {
-    font-family: 'Montserrat', sans-serif;
-    color: var(--primary-color);
-    margin-bottom: 15px;
-    font-size: 1.8em;
-    border-bottom: 2px solid var(--line-color);
-    padding-bottom: 10px;
-}
-
-.client-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px dashed var(--line-color);
-    font-size: 1.1em;
-    color: var(--text-dark);
-}
-
-.client-item:last-child {
-    border-bottom: none;
-}
-
-.client-item .remove-btn {
-    background-color: var(--error-color);
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.3s ease;
-    text-decoration: none;
-    display: inline-block;
-    line-height: 1;
-}
-
-.client-item .remove-btn:hover {
-    background-color: #c82333;
-}
+/* Linked Items Table */
+.linked-items-table { width: 100%; text-align: left; border-collapse: collapse; }
+.linked-item-row { border-bottom: 1px solid #eee; }
+.linked-item-row:last-child { border-bottom: none; }
+.linked-item-name { padding: 8px; font-size: 1.0em; color: var(--text-dark); }
+.linked-item-actions { text-align: right; padding: 8px; }
+.remove-link { color: #dc3545; text-decoration: none; font-size: 0.9em; font-weight: 600; transition: color 0.2s ease; }
+.remove-link:hover { color: #c82333; text-decoration: underline; }
 
 .navigation-buttons {
     display: flex;
@@ -1068,116 +784,46 @@ main.list-main {
     width: 100%;
     align-items: center;
 }
+.navigation-buttons .action-btn { width: 100%; max-width: 280px; margin-top: 0; }
 
-.navigation-buttons .action-btn {
-    width: 100%;
-    max-width: 280px; 
-    margin-top: 0; 
+/* ==========================================================================
+   8. RESPONSIVIDADE
+   ========================================================================== */
+@media (max-width: 1200px) {
+    .lista-de-cards { grid-template-columns: repeat(3, 1fr); }
 }
-
-
-/*
-|=================================================================================
-| 5. RESPONSIVIDADE GERAL
-|=================================================================================
-*/
 
 @media (max-width: 1024px) {
     .header h1 { font-size: 3.5em; }
     .header p.slogan { font-size: 1.2em; }
+    
+    /* Ajuste para 2 colunas */
     .container { grid-template-columns: repeat(2, 1fr); gap: 25px; }
-    .card { padding: 30px; min-height: 300px; }
-    .card h2 { font-size: 1.8em; }
-    .card p { font-size: 1em; }
-    .card button { padding: 16px 30px; font-size: 1.1em; }
-    .card .icon { font-size: 3em; }
-
-    /* Form & List Responsiveness */
-    .header.list-header h1 { font-size: 3em; }
-    .header.list-header p.slogan { font-size: 1.1em; }
-    .separator.list-separator { margin-bottom: 40px; }
-    main.list-main { padding: 30px 30px; }
-    .search-form input[type="text"] { max-width: 100%; }
-    .search-form input[type="submit"],
-    .search-form button[type="submit"] { padding: 10px 25px; font-size: 1em; }
-    .client-list-section h2,
-    .restaurant-list-section h2 { font-size: 2em; margin-bottom: 20px; }
-    .client-item,
-    .restaurant-item { flex-direction: column; align-items: flex-start; gap: 10px; }
-    .client-info,
-    .restaurant-info { margin-right: 0; width: 100%; }
-    .client-actions,
-    .restaurant-actions { width: 100%; justify-content: flex-end; }
-    .action-btn { padding: 8px 12px; font-size: 0.85em; }
-    .add-new-client-btn,
-    .add-new-restaurant-btn { padding: 14px 30px; font-size: 1.1em; max-width: 250px; }
     
     .form-card { max-width: 90%; }
-    .form-card h2 { font-size: 2em; margin-bottom: 25px; }
-    .form-group { margin-bottom: 20px; }
-    .form-group input, .form-group select { padding: 12px; font-size: 0.95em; }
-    .form-card button[type="submit"], .form-card .action-btn { padding: 15px 30px; font-size: 1.1em; max-width: 250px; margin-top: 20px; }
-    .client-list h3 { font-size: 1.6em; }
-    .client-item { font-size: 1em; }
-    .navigation-buttons { gap: 10px; }
+}
 
+@media (max-width: 900px) {
+    .lista-de-cards { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
     .header h1 { font-size: 2.8em; }
     .header p.slogan { font-size: 1.1em; margin-bottom: 30px; }
-    .separator { margin-bottom: 40px; }
     .container { grid-template-columns: 1fr; gap: 20px; }
-    .card { padding: 25px; min-height: unset; }
-    .card h2 { font-size: 1.6em; }
-    .card p { font-size: 0.95em; }
-    .card button { padding: 14px 25px; font-size: 1em; }
-    .card .icon { font-size: 2.8em; margin-bottom: 15px; }
-
-    /* Form & List Responsiveness */
-    .header.list-header h1 { font-size: 2.5em; }
-    .header.list-header p.slogan { font-size: 1em; }
-    .separator.list-separator { margin-bottom: 30px; }
-    main.list-main { padding: 25px 20px; }
-    .search-form { gap: 10px; margin-bottom: 30px; }
-    .search-form input[type="submit"],
-    .search-form button[type="submit"] { padding: 9px 20px; font-size: 0.95em; }
-    .client-list-section h2,
-    .restaurant-list-section h2 { font-size: 1.8em; }
-    .client-item,
-    .restaurant-item { padding: 12px 0; font-size: 1em; }
-    .client-info span.name,
-    .restaurant-info span.name { font-size: 1.05em; }
-    .client-info span.contact,
-    .restaurant-info span.details { font-size: 0.9em; }
-    .client-actions,
-    .restaurant-actions { gap: 8px; }
-    .action-btn { padding: 7px 10px; font-size: 0.8em; }
-    .add-new-client-btn,
-    .add-new-restaurant-btn { padding: 12px 25px; font-size: 1em; max-width: 200px; margin-top: 30px; }
-
-    /* Nav Responsiveness for principal.html */
+    
     .functions-btn span { display: none; } 
     .functions-btn { padding: 10px !important; border-radius: 50% !important; } 
     .functions-btn i { margin-right: 0; } 
+}
+
+@media (max-width: 600px) {
+    .lista-de-cards { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {
     body { padding: 15px; }
     .header { margin-bottom: 20px; }
     .header h1 { font-size: 2.2em; }
-    .header p.slogan { font-size: 1em; margin-bottom: 25px; }
-    .separator { margin-bottom: 30px; }
-    .card { padding: 20px; }
-    .card h2 { font-size: 1.4em; }
-    .card p { font-size: 0.9em; margin-bottom: 20px; }
-    .card button { padding: 12px 20px; font-size: 0.95em; }
-    .card .icon { font-size: 2.5em; }
-
-    /* Form & List Responsiveness */
     .form-card { padding: 25px 30px; }
-    .form-card h2 { font-size: 1.8em; margin-bottom: 20px; }
-    .form-group { margin-bottom: 18px; }
-    .form-group input, .form-group select { padding: 10px; font-size: 0.9em; }
-    .form-card button[type="submit"], .form-card .action-btn { padding: 12px 25px; font-size: 1em; max-width: 200px; margin-top: 18px; }
 }
