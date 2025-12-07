@@ -22,6 +22,9 @@ public class Restaurante extends Model {
 
     @Required
     public String categoria;
+
+    public String whatsapp;   
+    public String linkPagina;
     
     // ALTERADO: De Blob para Lista de Fotos
     @OneToMany(mappedBy = "restaurante", cascade = CascadeType.ALL)

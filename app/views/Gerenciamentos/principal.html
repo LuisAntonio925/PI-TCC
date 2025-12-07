@@ -67,25 +67,47 @@
                         <img src="https://via.placeholder.com/400x160/A34E2B/FFFFFF?text=${rest.nomeDoRestaurante?.replaceAll(' ', '+') ?: 'Restaurante'}" alt="${rest.nomeDoRestaurante}">
                     #{/else}
                 </div>
+                
                 <div class="info-e-acoes">
                     <h3 class="nome-restaurante">${rest.nomeDoRestaurante}</h3>
+                    
+                    <!-- Categoria -->
                     <span class="categoria"><i class="fas fa-tag"></i> ${rest.categoria}</span>
+
+                    <!-- NOVO: WhatsApp (Aparece se tiver preenchido) -->
+                    #{if rest.whatsapp}
+                        <span class="categoria" style="margin-top: -10px; display: block;">
+                            <i class="fab fa-whatsapp" style="color: #25D366; font-size: 1.1em; margin-right: 5px;"></i> 
+                            <a href="https://wa.me/55${rest.whatsapp}" target="_blank" style="color: #888; text-decoration: none; font-size: 0.9em;">
+                                ${rest.whatsapp}
+                            </a>
+                        </span>
+                    #{/if}
                     
                     <div class="botoes-acao">
-                        <a href="#" class="btn-acessar">Acessar</a> 
                         
+                        <!-- LÓGICA DO BOTÃO ACESSAR -->
+                        #{if rest.linkPagina}
+                            <a href="${rest.linkPagina}" target="_blank" class="btn-acessar">
+                                Acessar <i class="fas fa-external-link-alt" style="font-size: 0.8em; margin-left: 5px;"></i>
+                            </a>
+                        #{/if}
+                        
+                        <!-- BOTÃO FAVORITAR -->
                         #{if clienteConectado}
                         <a href="javascript:void(0);"
                            class="btn-favoritar ${clienteConectado.restaurantes.contains(rest) ? 'favorito' : ''}"
-                           data-rest-id="${rest.id}">
+                           data-rest-id="${rest.id}"
+                           style="margin-left: auto;"> <!-- Empurra para a direita se estiver sozinho -->
                             <i class="${clienteConectado.restaurantes.contains(rest) ? 'fas fa-star' : 'far fa-star'}"></i>
                         </a>
                         #{/if}
                         #{else}
-                        <button class="btn-favoritar" title="Faça login para favoritar" disabled>
+                        <button class="btn-favoritar" title="Faça login para favoritar" disabled style="margin-left: auto;">
                             <i class="far fa-star"></i>
                         </button>
                         #{/else}
+
                     </div>
                 </div>
             </div>

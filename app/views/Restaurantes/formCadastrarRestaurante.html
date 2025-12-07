@@ -51,6 +51,26 @@
             </div>
             #{/field}
             
+<!-- NOVO: WHATSAPP -->
+#{field 'rest.whatsapp'}
+    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+        <label for="${field.id}">WhatsApp (Somente números):</label>
+        <input type="text" id="${field.id}" name="${field.name}" class="form-control" value="${field.value ?: rest?.whatsapp}" placeholder="Ex: 11999999999">
+        <span class="form-hint">Digite o DDD + Número (sem traços ou espaços).</span>
+        <span class="form-hint">#{error field.name /}</span>
+    </div>
+#{/field}
+
+<!-- NOVO: LINK DA PÁGINA -->
+#{field 'rest.linkPagina'}
+    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+        <label for="${field.id}">Link da Página / Instagram (Opcional):</label>
+        <input type="text" id="${field.id}" name="${field.name}" class="form-control" value="${field.value ?: rest?.linkPagina}" placeholder="Ex: https://instagram.com/seurestaurante">
+        <span class="form-hint">Cole o link completo (começando com http:// ou https://).</span>
+        <span class="form-hint">#{error field.name /}</span>
+    </div>
+#{/field}
+
             #{field 'foto'}
             <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
                 <label for="${field.id}">Foto do Restaurante</label>
