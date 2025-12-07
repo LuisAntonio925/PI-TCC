@@ -2,56 +2,77 @@
 #{set title:'Editar Perfil' /}
 
 <body class="list-page">
-    <header class="header list-header">
-         <h1>Editar Perfil</h1>
-         <p class="slogan">Atualize suas informações.</p>
-     </header>
-     <div class="separator list-separator"></div>
-     <main class="list-main">
-         <div class="form-card">
-             <h2>Seus Dados</h2>
-             <form action="@{ClientesPerfil.atualizarPerfil()}" method="POST">
+<header class="header list-header">
+    <h1>Editar Perfil</h1>
+    <p class="slogan">Atualize suas informações.</p>
+</header>
+<div class="separator list-separator"></div>
 
-                 #{ifErrors}
-                     <div class="alert alert-danger">
-                         <p>Corrija os erros abaixo:</p>
-                         <ul>
-                         #{errors}
-                             <li>${error}</li>
-                         #{/errors}
-                         </ul>
-                     </div>
-                 #{/ifErrors}
+<main class="list-main">
+    <div class="form-card">
+        <h2>Seus Dados</h2>
 
-                 <input type="hidden" name="cliente.id" value="${clienteLogado?.id}">
+        #{ifErrors}
+        <div class="alert alert-danger">
+            <p>Corrija os erros abaixo:</p>
+            <ul>
+            #{errors}
+                <li>${error}</li>
+            #{/errors}
+            </ul>
+        </div>
+        #{/ifErrors}
 
-                 <!-- Input do Nome -->
-<div class="form-group">
-    <label for="iNome">Nome Completo:</label>
-    <input type="text" id="iNome" name="cliente.nome" 
-           value="${flash['cliente.nome'] ?: clienteLogado?.nome}" required>
-</div>
+        <!-- IMPORTANTE: enctype para upload -->
+        <form action="@{ClientesPerfil.atualizarPerfil()}" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="cliente.id" value="${clienteLogado?.id}">
 
-<!-- Input do Telefone -->
-<div class="form-group">
-    <label for="iTelefone">Telefone:</label>
-    <input type="text" id="iTelefone" name="cliente.telefone" 
-           value="${flash['cliente.telefone'] ?: clienteLogado?.telefone}" required>
-</div>
+            <!-- Foto atual -->
+            #{if clienteLogado.temFoto()}
+            <div class="form-group" style="text-align:center;">
+                <label>Foto atual:</label>
+                <div style="margin-top:10px;">
+                    <img src="/uploads/clientes/${clienteLogado.id}/${clienteLogado.nomeFoto}"
+                         alt="Foto de ${clienteLogado.nome}"
+                         style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:1px solid #ddd;">
+                </div>
+            </div>
+            #{/if}
 
-<!-- Input do Email -->
-<div class="form-group">
-     <label for="iEmail">Email:</label>
-     <input type="email" id="iEmail" name="cliente.email" 
-            value="${flash['cliente.email'] ?: clienteLogado?.email}" required>
-</div>
+            <!-- Campo para escolher nova foto -->
+            <div class="form-group">
+                <label for="foto">Nova foto de perfil:</label>
+                <input type="file" id="foto" name="foto" class="form-control-file" accept="image/*">
+                <span class="form-hint">Deixe em branco se não quiser trocar a foto.</span>
+            </div>
 
+            <!-- Nome -->
+            <div class="form-group">
+                <label for="iNome">Nome Completo:</label>
+                <input type="text" id="iNome" name="cliente.nome"
+                       value="${flash['cliente.nome'] ?: clienteLogado?.nome}" required>
+            </div>
 
-                 <button type="submit">Salvar Alterações</button>
-             </form>
-              <div class="navigation-buttons" style="margin-top: 20px;">
-                  <a href="@{ClientesPerfil.perfil()}" class="action-btn">Cancelar</a>
-              </div>
-         </div>
-     </main>
- </body>
+            <!-- Telefone -->
+            <div class="form-group">
+                <label for="iTelefone">Telefone:</label>
+                <input type="text" id="iTelefone" name="cliente.telefone"
+                       value="${flash['cliente.telefone'] ?: clienteLogado?.telefone}" required>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="iEmail">Email:</label>
+                <input type="email" id="iEmail" name="cliente.email"
+                       value="${flash['cliente.email'] ?: clienteLogado?.email}" required>
+            </div>
+
+            <button type="submit">Salvar Alterações</button>
+        </form>
+
+        <div class="navigation-buttons" style="margin-top: 20px;">
+            <a href="@{ClientesPerfil.perfil()}" class="action-btn">Cancelar</a>
+        </div>
+    </div>
+</main>
+</body>

@@ -3,7 +3,6 @@ package controllers;
 import models.Cliente;
 import models.Restaurante;
 import models.Status;
-import play.Logger;
 import play.mvc.Controller;
 import play.mvc.With;
 import java.util.List;
@@ -30,7 +29,6 @@ public class Favoritos extends Controller {
         render(meusFavoritos, outrosRestaurantes, clienteConectado);
     }
 
-    // Mantive o método antigo caso precise dele em algum lugar sem AJAX
     public static void alternarFavorito(Long idRest) {
         Cliente clienteConectado = Seguranca.getClienteConectado();
         if (clienteConectado == null) {
@@ -53,19 +51,15 @@ public class Favoritos extends Controller {
         } else {
             flash.error("Restaurante não encontrado.");
         }
-        Gerenciamentos.principal(); 
+        Gerenciamentos.principal();
     }
 
-    /**
-     * NOVO MÉTODO: Manipulação via AJAX (Javascript).
-     * Retorna JSON true/false em vez de recarregar a página.
-     */
+    // MÉTODO AJAX
     public static void favoritarAjax(Long idRest) {
         Cliente clienteConectado = Seguranca.getClienteConectado();
-        
-        // Retorna erro 401 se não estiver logado, para o JS tratar
+
         if (clienteConectado == null) {
-            response.status = 401; 
+            response.status = 401;
             renderText("Não autorizado");
             return;
         }
@@ -76,19 +70,17 @@ public class Favoritos extends Controller {
         }
 
         boolean agoraEhFavorito;
-        
-        // Lógica de alternar (toggle)
+
         if (clienteConectado.restaurantes.contains(restaurante)) {
             clienteConectado.restaurantes.remove(restaurante);
-            agoraEhFavorito = false; // Removeu
+            agoraEhFavorito = false;
         } else {
             clienteConectado.restaurantes.add(restaurante);
-            agoraEhFavorito = true; // Adicionou
+            agoraEhFavorito = true;
         }
-        
+
         clienteConectado.save();
 
-        // Retorna apenas o booleano para o Javascript atualizar o ícone
         renderJSON(agoraEhFavorito);
     }
 }

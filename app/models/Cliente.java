@@ -11,8 +11,6 @@ import javax.persistence.ManyToMany;
 
 import net.sf.oval.constraint.MinSize; // Mantido para o campo 'nome'
 import play.data.validation.Email;
-// import play.data.validation.Max; // Removido se não for usado em outros campos
-// import play.data.validation.Min; // Removido se não for usado em outros campos
 import play.data.validation.Required; // Import está aqui
 import play.db.jpa.Model;
 import play.libs.Crypto;
@@ -20,15 +18,10 @@ import play.libs.Crypto;
 @Entity
 public class Cliente extends Model {
 
-
     @Required
-   // @MinSize(3)
     public String nome;
 
-    // ---- ALTERAÇÃO AQUI ----
-    @Required // Mantido
-    // @MinSize(8)  // REMOVIDO
-    // @MaxSize(30) // REMOVIDO
+    @Required
     public String telefone;
 
     @Required
@@ -36,6 +29,9 @@ public class Cliente extends Model {
     public String email;
 
     public String senha; // A validação disto é manual no controller
+
+    // NOVO: nome do arquivo da foto
+    public String nomeFoto;
 
     @Enumerated(EnumType.STRING)
     public Perfil perfil;
@@ -55,4 +51,9 @@ public class Cliente extends Model {
     @ManyToMany
     @JoinTable(name="cliente_restaurante")
     public List<Restaurante> restaurantes;
+
+    // Método auxiliar para saber se tem foto
+    public boolean temFoto() {
+        return nomeFoto != null && !nomeFoto.isEmpty();
+    }
 }

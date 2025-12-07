@@ -1,5 +1,5 @@
 #{extends 'main.html' /}
-#{set title:'Lista de Restaurantes' /}
+#{set title:'Principal' /}
 
 <header class="header-content"> 
     <div class="nav-padding">
@@ -48,12 +48,10 @@
             #{list items:restaurantes, as:'rest'}
             <div class="restaurante-card">
                 <div class="foto-container">
-                    <!-- LÓGICA CORRIGIDA PARA EXIBIR IMAGEM -->
                     #{if rest.temFoto()}
                         <img src="/uploads/${rest.id}/${rest.fotos[0].nome}" alt="${rest.nomeDoRestaurante}">
                     #{/if}
                     #{else}
-                        <!-- Imagem placeholder se não houver foto -->
                         <img src="https://via.placeholder.com/400x160/A34E2B/FFFFFF?text=${rest.nomeDoRestaurante?.replaceAll(' ', '+') ?: 'Restaurante'}" alt="${rest.nomeDoRestaurante}">
                     #{/else}
                 </div>
@@ -64,15 +62,17 @@
                         <a href="#" class="btn-acessar">Acessar</a> 
                         
                         #{if clienteConectado}
-                            <a href="@{Favoritos.alternarFavorito(rest.id)}"
-                                class="btn-favoritar ${clienteConectado.restaurantes.contains(rest) ? 'favorito' : ''}">
-                                <i class="${clienteConectado.restaurantes.contains(rest) ? 'fas fa-star' : 'far fa-star'}"></i>
-                            </a>
+                        <!-- BOTÃO FAVORITAR COM AJAX -->
+                        <a href="javascript:void(0);"
+                           class="btn-favoritar ${clienteConectado.restaurantes.contains(rest) ? 'favorito' : ''}"
+                           data-rest-id="${rest.id}">
+                            <i class="${clienteConectado.restaurantes.contains(rest) ? 'fas fa-star' : 'far fa-star'}"></i>
+                        </a>
                         #{/if}
                         #{else}
-                            <button class="btn-favoritar" title="Faça login para favoritar" disabled>
-                                <i class="far fa-star"></i>
-                            </button>
+                        <button class="btn-favoritar" title="Faça login para favoritar" disabled>
+                            <i class="far fa-star"></i>
+                        </button>
                         #{/else}
                     </div>
                 </div>
@@ -91,3 +91,51 @@
         <a href="@{Restaurantes.formCadastrarRestaurante()}" class="btn-cadastrar-restaurante">Cadastrar Meu Restaurante</a>
     </div>
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var botoesFavorito = document.querySelectorAll('.btn-favoritar[data-rest-id]');
+
+    botoesFavorito.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var idRest = this.getAttribute('data-rest-id');
+
+            fetch('@{Favoritos.favoritarAjax()}' + '?idRest=' + idRest, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function (response) {
+                if (response.status === 401) {
+                    alert('Você precisa estar logado para favoritar.');
+                    return null;
+                }
+                if (!response.ok) {
+                    throw new Error('Erro na requisição');
+                }
+                return response.json();
+            })
+            .then(function (data) {
+                if (data === null) return;
+
+                var icon = btn.querySelector('i');
+
+                if (data === true) {
+                    btn.classList.add('favorito');
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                } else {
+                    btn.classList.remove('favorito');
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                }
+            })
+            .catch(function (err) {
+                console.error(err);
+                alert('Ocorreu um erro ao favoritar/desfavoritar.');
+            });
+        });
+    });
+});
+</script>

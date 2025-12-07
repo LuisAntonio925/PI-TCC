@@ -1,82 +1,91 @@
-#{extends 'main.html' /}
 
 #{extends 'main.html' /}
+#{set title: rest?.id ? 'Editar Restaurante' : 'Cadastrar Restaurante' /}
 
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
+<body class="list-page">
+
+<header class="header list-header">
+    <h1>${rest?.id ? 'Editar Restaurante' : 'Cadastrar Restaurante'}</h1>
+    <p class="slogan">Preencha os dados abaixo para gerenciar seu estabelecimento.</p>
+</header>
+
+<main class="list-main">
+    <div class="form-card">
+
+        <!-- Bloco de Erros Gerais -->
+        #{ifErrors}
+        <div class="alert alert-danger" style="text-align: left; margin-bottom: 25px;">
+            <strong>Por favor, corrija os erros abaixo:</strong>
+            <ul>
+                #{errors}<li>${error}</li>#{/errors}
+            </ul>
+        </div>
+        #{/ifErrors}
+
+        <form action="@{Restaurantes.salvar()}" method="post" enctype="multipart/form-data">
             #{if rest?.id}
-            <h1>Editar Restaurante</h1>
+            <input type="hidden" name="rest.id" value="${rest.id}">
             #{/if}
-            #{else}
-            <h1>Cadastrar Restaurante</h1>
-            #{/else}
 
-            #{if flash.error}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>Erro:</strong> ${flash.error}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            #{field 'rest.nomeDoRestaurante'}
+            <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                <label for="${field.id}">Nome do Restaurante</label>
+                <input type="text" id="${field.id}" name="${field.name}" value="${rest?.nomeDoRestaurante ?: ''}" class="form-control">
+                #{ifError field.name}<span class="error">${field.error}</span>#{/ifError}
+            </div>
+            #{/field}
+
+            #{field 'rest.CNPJ'}
+            <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                <label for="${field.id}">CNPJ</label>
+                <input type="text" id="${field.id}" name="${field.name}" value="${rest?.CNPJ ?: ''}" class="form-control">
+                #{ifError field.name}<span class="error">${field.error}</span>#{/ifError}
+            </div>
+            #{/field}
+
+            #{field 'rest.categoria'}
+            <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                <label for="${field.id}">Categoria</label>
+                <input type="text" id="${field.id}" name="${field.name}" value="${rest?.categoria ?: ''}" class="form-control">
+                #{ifError field.name}<span class="error">${field.error}</span>#{/ifError}
+            </div>
+            #{/field}
+            
+            #{field 'foto'}
+            <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                <label for="${field.id}">Foto do Restaurante</label>
+                <input type="file" id="${field.id}" name="${field.name}" class="form-control-file">
+                <span class="form-hint">Envie uma imagem (JPG, PNG).</span>
+                #{ifError field.name}<span class="error">${field.error}</span>#{/ifError}
+            </div>
+            #{/field}
+            
+            <!-- Exibição da foto atual -->
+            #{if rest?.id && rest.temFoto()}
+            <div class="form-group">
+                <label>Imagem Atual</label>
+                <div style="margin-top: 10px;">
+                    <img src="/uploads/${rest.id}/${rest.fotos[0].nome}" alt="Imagem atual" style="max-width: 200px; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                </div>
             </div>
             #{/if}
 
-            <form action="@{Restaurantes.salvar()}" method="post" enctype="multipart/form-data" class="needs-validation">
-                #{if rest?.id}
-                <input type="hidden" name="rest.id" value="${rest.id}">
-                #{/if}
-                <div class="mb-3">
-                    <label for="nomeDoRestaurante" class="form-label">Nome do Restaurante <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="nomeDoRestaurante" name="rest.nomeDoRestaurante" value="${rest?.nomeDoRestaurante}" required>
-                </div>
-                <div class="mb-3">
-                    <label for="CNPJ" class="form-label">CNPJ <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="CNPJ" name="rest.CNPJ" value="${rest?.CNPJ}" required>
-                </div>
-                <div class="mb-3">
-                    <label for="categoria" class="form-label">Categoria <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="categoria" name="rest.categoria" value="${rest?.categoria}" required>
-                </div>
-
-                <!-- CAMPO FOTO (name="foto") -->
-                <div class="mb-3">
-                    <label for="foto" class="form-label">Foto do Restaurante</label>
-                    <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
-                    <div class="form-text">Escolha uma imagem JPG, PNG ou GIF.</div>
-
-                    <!-- EXIBIR IMAGEM ATUAL (DO ARQUIVO) -->
-                    #{if rest?.id && rest.temFoto()}
-                    <div class="mt-3">
-                        <p><strong>Imagem atual:</strong></p>
-                        <!-- Caminho direto para a pasta uploads -->
-                        <img src="/uploads/${rest.id}/${rest.fotos[0].nome}" class="img-fluid" style="max-width: 200px; border-radius: 8px;">
-                    </div>
-                    #{/if}
-                </div>
-
-                #{if clientes && clientes.size() > 0}
-                <div class="mb-3">
-                    <label for="idCliente" class="form-label">Vincular a Cliente</label>
-                    <select class="form-control" id="idCliente" name="idCliente">
-                        <option value="">-- Selecione um cliente --</option>
-                        #{list items:clientes, as:'cliente'}
-                        <option value="${cliente.id}">${cliente.nome}</option>
-                        #{/list}
-                    </select>
-                </div>
-                #{/if}
-
-                <div class="d-flex gap-2">
-                    #{if rest?.id}
-                    <button type="submit" class="btn btn-primary">Atualizar Restaurante</button>
-                    #{/if}
-                    #{else}
-                    <button type="submit" class="btn btn-primary">Cadastrar Restaurante</button>
-                    #{/else}
-                    <a href="@{Restaurantes.listar2()}" class="btn btn-secondary">Cancelar</a>
-                </div>
-            </form>
-        </div>
+            <div class="form-actions" style="margin-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                <!-- Botão de Salvar -->
+                <button type="submit" class="action-btn">
+                    <i class="fas fa-save"></i> ${rest?.id ? 'Atualizar' : 'Salvar'} Restaurante
+                </button>
+                
+                <!-- Botão Cancelar com o layout correto -->
+                <a href="@{Gerenciamentos.principal()}" class="action-btn" style="background-color: #6c757d; text-align: center;">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
     </div>
-</div>
+</main>
+</body>
+
 
 
 <script>

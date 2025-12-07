@@ -1,61 +1,167 @@
 #{extends 'main.html' /}
 #{set title:'Lista de Restaurantes' /}
 
-
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Restaurantes - RestApp</title>
-</head>
 <body class="list-page">
-    <header class="header list-header">
-        <h1>Lista de Restaurantes</h1>
-        <p class="slogan">Gerencie todos os restaurantes parceiros da sua plataforma.</p>
-    </header>
+<header class="header list-header">
+    <h1>Lista de Restaurantes</h1>
+    <p class="slogan">Gerencie todos os restaurantes parceiros da sua plataforma.</p>
+</header>
 
-    <div class="separator list-separator"></div>
+<main class="list-main">
 
-    <main class="list-main">
-        <form action="@{Restaurantes.listar2}" method="GET" class="search-form">
-            <label for="search_restaurant"><i class="fas fa-search"></i> Buscar por nome, CNPJ ou categoria:</label>
-            <input type="text" id="search_restaurant" name="busca" value="${busca}" placeholder="Ex: Pizzaria Bella, 12.345.678/0001-90, Italiana">
-            <button type="submit">Pesquisar</button>
-        </form>
+    <form action="@{Restaurantes.listar2()}" method="GET" class="search-form" onsubmit="return false;">
+        <label for="searchrestaurant">
+            <i class="fas fa-search"></i> Buscar por nome, CNPJ ou categoria
+        </label>
+        <input type="text" id="searchrestaurant" name="busca" value="${busca}" placeholder="Ex: Pizzaria Bella, 12.345.6780001-90, Italiana">
+        <button type="button" id="btnBuscar" class="add-new-restaurant-btn">
+            <i class="fas fa-search"></i> Buscar
+        </button>
+    </form>
 
+    <!-- WRAPPER QUE SERÁ ATUALIZADO PELO AJAX -->
+    <div id="lista-restaurantes-wrapper">
         <div class="restaurant-list-section">
             <h2><i class="fas fa-store"></i> Restaurantes Cadastrados</h2>
-          
-                <ul>
-                    #{list items:listaRest, as:'r'}
-                    <li class="restaurant-item">
-                        <div class="restaurant-info">
-                            <span class="name">${r.nomeDoRestaurante}</span>
-                            <span class="details"><i class="fas fa-id-card"></i> CNPJ: ${r.CNPJ} | <i class="fas fa-tag"></i> Categoria: ${r.categoria}</span>
-                        </div>
-                        <div class="restaurant-actions">
-                            <a href="@{Restaurantes.editar(r.id)}" class="action-btn edit-btn">
-                                <i class="fas fa-edit"></i> Editar
-                            </a>
-                            <a href="@{Restaurantes.remover(r.id)}" class="action-btn remove-btn" onclick="return confirm('Tem certeza que deseja remover este restaurante?');">
-                                <i class="fas fa-trash-alt"></i> Remover
-                            </a>
-                        </div>
-                    </li>
-                    #{/list}
-                </ul>
+
+            #{if listaRest && !listaRest.isEmpty()}
+            <ul>
+                #{list items:listaRest, as:'r'}
+                <li class="restaurant-item">
+                    <div class="restaurant-info">
+                        <span class="name">${r.nomeDoRestaurante}</span>
+                        <span class="details">
+                            <i class="fas fa-id-card"></i> CNPJ ${r.CNPJ}
+                            <i class="fas fa-tag"></i> Categoria ${r.categoria}
+                        </span>
+                    </div>
+                    <div class="restaurant-actions">
+                        <a href="@{Restaurantes.editar(r.id)}" class="action-btn edit-btn">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+
+                        <!-- NOVO: botão de status AJAX -->
+                        <button type="button"
+                                class="action-btn ${r.status == models.Status.ATIVO ? 'favorite-btn' : 'remove-btn'} btn-toggle-status"
+                                data-rest-id="${r.id}">
+                            <i class="fas ${r.status == models.Status.ATIVO ? 'fa-toggle-on' : 'fa-toggle-off'}"></i>
+                            ${r.status == models.Status.ATIVO ? 'Ativo' : 'Inativo'}
+                        </button>
+
+                        <a href="@{Restaurantes.remover(r.id)}" class="action-btn remove-btn"
+                           onclick="return confirm('Tem certeza que deseja remover este restaurante?');">
+                            <i class="fas fa-trash-alt"></i> Remover
+                        </a>
+                    </div>
+                </li>
+                #{/list}
+            </ul>
+            #{/if}
             #{else}
-                <div class="no-restaurants-message">
-                    <p><i class="fas fa-exclamation-circle"></i> Nenhum restaurante encontrado com este termo ou na base de dados.</p>
-                </div>
+            <div class="no-restaurants-message">
+                <p><i class="fas fa-exclamation-circle"></i> Nenhum restaurante encontrado com este termo ou na base de dados.</p>
+            </div>
             #{/else}
         </div>
 
-        <a href="@{Restaurantes.formCadastrarRestaurante}" class="add-new-restaurant-btn">
-            <i class="fas fa-plus-circle"></i> Cadastrar Novo 
-        </a>
-		<a href="@{Gerenciamentos.principal}" class="add-new-restaurant-btn"> Voltar</a>
-    </main>
+        <div class="text-center">
+            <a href="@{Restaurantes.formCadastrarRestaurante()}" class="add-new-restaurant-btn">
+                <i class="fas fa-plus-circle"></i> Cadastrar Novo
+            </a>
+            <a href="@{Gerenciamentos.principal()}" class="add-new-restaurant-btn">
+                Voltar
+            </a>
+        </div>
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var inputBusca = document.getElementById('searchrestaurant');
+    var btnBuscar = document.getElementById('btnBuscar');
+    var wrapper = document.getElementById('lista-restaurantes-wrapper');
+
+    function inicializarBotoesStatus() {
+        var botoesStatus = document.querySelectorAll('.btn-toggle-status[data-rest-id]');
+        botoesStatus.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var idRest = this.getAttribute('data-rest-id');
+                var botao = this;
+
+                fetch('@{Restaurantes.trocarStatusAjax()}' + '?id=' + idRest, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Erro ao trocar status');
+                    }
+                    return response.json();
+                })
+                .then(function (data) {
+                    var icon = botao.querySelector('i');
+                    botao.classList.remove('favorite-btn', 'remove-btn');
+
+                    if (data.status === 'ATIVO') {
+                        botao.classList.add('favorite-btn');
+                        botao.innerHTML = '<i class="fas fa-toggle-on"></i> Ativo';
+                    } else {
+                        botao.classList.add('remove-btn');
+                        botao.innerHTML = '<i class="fas fa-toggle-off"></i> Inativo';
+                    }
+                })
+                .catch(function (err) {
+                    console.error(err);
+                    alert('Erro ao trocar status do restaurante.');
+                });
+            });
+        });
+    }
+
+    function fazerBusca() {
+        var termo = inputBusca.value || '';
+
+        fetch('@{Restaurantes.listar2()}' + '?busca=' + encodeURIComponent(termo), {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error('Erro ao buscar restaurantes');
+            }
+            return response.text();
+        })
+        .then(function (html) {
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            var novoWrapper = tempDiv.querySelector('#lista-restaurantes-wrapper');
+            if (novoWrapper) {
+                wrapper.innerHTML = novoWrapper.innerHTML;
+                // Reaplica eventos nos botões de status após atualizar a lista
+                inicializarBotoesStatus();
+            }
+        })
+        .catch(function (err) {
+            console.error(err);
+            alert('Erro ao buscar restaurantes.');
+        });
+    }
+
+    // Eventos da busca
+    btnBuscar.addEventListener('click', fazerBusca);
+
+    var timeoutId = null;
+    inputBusca.addEventListener('keyup', function () {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(fazerBusca, 400);
+    });
+
+    // Inicializa botões de status na carga inicial da página
+    inicializarBotoesStatus();
+});
+</script>
 </body>
-</html>

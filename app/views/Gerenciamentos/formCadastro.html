@@ -4,13 +4,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    </head>
+</head>
 <body class="list-page">
     <header class="header list-header">
-     <h1>Cadastro do usuario</h1>
-     <p class="slogan">Preencha os dados abaixo para cadastrar ou editar o usuário.</p>
-
-        </header>
+        <h1>Cadastro do usuario</h1>
+        <p class="slogan">Preencha os dados abaixo para cadastrar ou editar o usuário.</p>
+    </header>
 
     <div class="separator list-separator"></div>
 
@@ -28,13 +27,14 @@
                     </ul>
                 </div>
             #{/ifErrors}
-            <form action="@{Gerenciamentos.salvar()}" method="POST">
+
+            <!-- NOVO: enctype para upload -->
+            <form action="@{Gerenciamentos.salvar()}" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="cli.id" value="${cli?.id}">
 
                 #{field 'cli.nome'}
                     <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
                         <label for="${field.id}">Nome Completo:</label>
-                        
                         <input type="text" id="${field.id}" name="${field.name}" value="${field.value ?: cli?.nome}">
                         #{error field.name /}
                     </div>
@@ -43,7 +43,6 @@
                 #{field 'cli.telefone'}
                     <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
                         <label for="${field.id}">Telefone:</label>
-                        
                         <input type="text" id="${field.id}" name="${field.name}" value="${field.value ?: cli?.telefone}">
                         #{error field.name /}
                     </div>
@@ -52,7 +51,6 @@
                 #{field 'cli.email'}
                     <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
                         <label for="${field.id}">Email:</label>
-                        
                         <input type="email" id="${field.id}" name="${field.name}" value="${field.value ?: cli?.email}">
                         #{error field.name /}
                     </div>
@@ -68,6 +66,24 @@
                         #{error field.name /}
                     </div>
                 #{/field}
+
+                <!-- NOVO: Foto de perfil -->
+                <div class="form-group">
+                    <label for="foto">Foto de Perfil:</label>
+                    <input type="file" id="foto" name="foto" class="form-control-file" accept="image/*">
+                    <span class="form-hint">Envie uma imagem JPG ou PNG.</span>
+                </div>
+
+                #{if cli?.id && cli.temFoto()}
+                <div class="form-group">
+                    <label>Foto atual:</label>
+                    <div>
+                        <img src="/uploads/clientes/${cli.id}/${cli.nomeFoto}"
+                             alt="Foto de ${cli.nome}"
+                             style="max-width: 150px; border-radius: 50%; border: 1px solid #ddd;">
+                    </div>
+                </div>
+                #{/if}
 
                 #{if restaurantesDisponiveis}
                     <hr class="form-separator" style="margin: 20px 0;">
@@ -96,8 +112,8 @@
 
         #{if cli?.id}
             <hr class="form-separator">
-             <div class="form-card form-card-secondary">
-                 <h3>Restaurantes Vinculados</h3>
+            <div class="form-card form-card-secondary">
+                <h3>Restaurantes Vinculados</h3>
                 #{if cli.restaurantes.isEmpty()}
                     <p>Nenhum restaurante vinculado.</p>
                 #{/if}
@@ -116,13 +132,12 @@
                     </table>
                 #{/else}
             </div>
-            #{/if}
+        #{/if}
 
-         <div class="navigation-buttons">
+        <div class="navigation-buttons">
             <a href="@{Gerenciamentos.listar(null)}" class="action-btn">Voltar para Lista</a>
             <a href="@{Gerenciamentos.principal()}" class="action-btn">Ir para Início</a>
-         </div>
-
+        </div>
     </main>
 </body>
 </html>

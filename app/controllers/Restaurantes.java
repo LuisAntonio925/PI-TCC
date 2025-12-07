@@ -1,7 +1,11 @@
+
 package controllers;
 
 import java.io.File;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
 import models.Cliente;
 import models.Foto;
 import models.Restaurante;
@@ -98,5 +102,30 @@ public class Restaurantes extends Controller {
             rest.save();
         }
         listar2(null);
+    }
+
+    // NOVO: trocar status via AJAX
+    public static void trocarStatusAjax(Long id) {
+        Restaurante rest = Restaurante.findById(id);
+        if (rest == null) {
+            response.status = 404;
+            renderText("Restaurante não encontrado");
+            return;
+        }
+
+        // Alterna o status
+        if (rest.status == Status.ATIVO) {
+            rest.status = Status.INATIVO;
+        } else {
+            rest.status = Status.ATIVO;
+        }
+        rest.save();
+
+        // Retorna JSON com o novo status
+        Map<String, Object> resp = new HashMap<String, Object>();
+        resp.put("id", rest.id);
+        resp.put("status", rest.status.toString());
+
+        renderJSON(resp);
     }
 }

@@ -12,7 +12,9 @@ GET     /gerenciamentos/formcadastro    Gerenciamentos.formCadastro
 POST    /gerenciamentos/salvar          Gerenciamentos.salvar
 
 GEt     /restaurantes/salvar            Restaurantes.salvar
-POST    /restauarante/{id}/imagem       Restaurantes.getImagem
+POST    /restaurantes/{id}/imagem       Restaurantes.getImagem
+POST    /restaurantes/trocarStatusAjax      Restaurantes.trocarStatusAjax
+
 # --- FIM DAS LINHAS ADICIONADAS ---
 
 # Ignore favicon requests
