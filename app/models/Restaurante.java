@@ -21,11 +21,17 @@ public class Restaurante extends Model {
     @Required
     public String CNPJ;
 
+    public String endereco; 
+
     @Required
     public String categoria;
 
     public String whatsapp;   
     public String linkPagina;
+
+    public Double latitude;
+    public Double longitude;
+
 
     @ManyToOne
     public Cliente proprietario; // Cliente que cadastrou o restaurante

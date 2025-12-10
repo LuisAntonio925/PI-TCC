@@ -7,6 +7,13 @@
             <a href="@{Gerenciamentos.ListasDeGerenciamentos()}" class="app-logo">RestApp</a>
             <div class="search-bar"></div> 
             <div class="action-icons">
+                
+                <!-- BOTÃO PERTO DE MIM -->
+                <button type="button" onclick="buscarPertoDeMim()" class="functions-btn" style="border:none; background:none; color: #A34E2B; cursor: pointer;" title="Ver restaurantes próximos">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Perto de Mim</span>
+                </button>
+
                 <a href="@{Gerenciamentos.principal()}" class="functions-btn">
                     <i class="fa-solid fa-house"></i>
                     <span>Início</span>
@@ -26,12 +33,10 @@
 
                         <a href="@{ClientesPerfil.perfil()}">Perfil</a>
                         
-                        <!-- ALTERAÇÃO AQUI: Configurações apenas para ADMINISTRADOR -->
                         #{if clienteConectado?.perfil == models.Perfil.ADMINISTRADOR}
                             <a href="@{Gerenciamentos.ListasDeGerenciamentos()}">Configurações</a>
                         #{/if}
 
-                        <!-- Meus Restaurantes só para PROPRIETÁRIO -->
                         #{if clienteConectado?.perfil == models.Perfil.PROPRIETARIO}
                             <a href="@{RestaurantesPerfil.restaurantes()}" >
                                 Meus Restaurantes
@@ -50,6 +55,14 @@
     <div>
         <h1>Os Melhores Sabores da Cidade</h1>
         <p class="slogan">Descubra restaurantes por categoria e encontre o seu próximo prato favorito.</p>
+        
+        <!-- Mensagem de feedback da Geolocalização -->
+        #{if flash.success}
+            <div class="alert alert-success" style="max-width: 800px; margin: 10px auto;">${flash.success}</div>
+        #{/if}
+        #{if flash.error}
+            <div class="alert alert-danger" style="max-width: 800px; margin: 10px auto;">${flash.error}</div>
+        #{/if}
     </div>
 
     <div class="separator"></div>
@@ -70,21 +83,39 @@
                     #{/else}
                 </div>
                 
-                <div class="info-e-acoes">
-                    <h3 class="nome-restaurante">${rest.nomeDoRestaurante}</h3>
+                <!-- AQUI FOI FEITO O AJUSTE DE ESPAÇAMENTO (gap: 4px) -->
+                <div class="info-e-acoes" style="display: flex; flex-direction: column; gap: 4px;">
                     
-                    <span class="categoria"><i class="fas fa-tag"></i> ${rest.categoria}</span>
+                    <h3 class="nome-restaurante" style="margin-bottom: 2px;">${rest.nomeDoRestaurante}</h3>
+                    
+                    <span class="categoria" style="display: block; font-size: 0.95em;">
+                        <i class="fas fa-tag"></i> ${rest.categoria}
+                    </span>
+
+                    <!-- EXIBE O ENDEREÇO SE HOUVER -->
+                    #{if rest.endereco}
+                        <span class="endereco" style="display: block; font-size: 0.9em; color: #666; line-height: 1.2;">
+                            <i class="fas fa-map-pin" style="color: #A34E2B; margin-right: 3px;"></i> ${rest.endereco}
+                        </span>
+                    #{/if}
+
+                    <!-- EXIBE O STATUS DO GPS -->
+                    #{if rest.latitude}
+                        <small style="display:block; color:#28a745; font-weight: 500; font-size: 0.85em;">
+                            <i class="fas fa-check-circle"></i> Localização verificada
+                        </small>
+                    #{/if}
 
                     #{if rest.whatsapp}
-                        <span class="categoria" style="margin-top: -10px; display: block;">
-                            <i class="fab fa-whatsapp" style="color: #25D366; font-size: 1.1em; margin-right: 5px;"></i> 
+                        <span class="categoria" style="display: block; margin-top: 2px;">
+                            <i class="fab fa-whatsapp" style="color: #25D366; font-size: 1.1em; margin-right: 3px;"></i> 
                             <a href="https://wa.me/55${rest.whatsapp}" target="_blank" style="color: #888; text-decoration: none; font-size: 0.9em;">
                                 ${rest.whatsapp}
                             </a>
                         </span>
                     #{/if}
                     
-                    <div class="botoes-acao">
+                    <div class="botoes-acao" style="margin-top: auto; padding-top: 15px;">
                         
                         #{if rest.linkPagina}
                             <a href="${rest.linkPagina}" target="_blank" class="btn-acessar">
@@ -135,6 +166,30 @@
 </main>
 
 <script>
+// --- FUNÇÃO DE GEOLOCALIZAÇÃO (PERTO DE MIM) ---
+function buscarPertoDeMim() {
+    if (navigator.geolocation) {
+        document.body.style.cursor = "wait";
+        
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var lat = position.coords.latitude;
+            var lon = position.coords.longitude;
+            window.location.href = "/proximos?lat=" + lat + "&lon=" + lon;
+            
+        }, function(error) {
+            document.body.style.cursor = "default";
+            if(error.code == 1) {
+                alert("Você precisa permitir a localização para usarmos o 'Perto de Mim'.");
+            } else {
+                alert("Não foi possível obter sua localização. Verifique seu GPS.");
+            }
+        });
+    } else {
+        alert("Seu navegador não suporta geolocalização.");
+    }
+}
+
+// --- SCRIPTS EXISTENTES DE FAVORITOS ---
 document.addEventListener('DOMContentLoaded', function () {
     var botoesFavorito = document.querySelectorAll('.btn-favoritar[data-rest-id]');
 
@@ -160,9 +215,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(function (data) {
                 if (data === null) return;
-
                 var icon = btn.querySelector('i');
-
                 if (data === true) {
                     btn.classList.add('favorito');
                     icon.classList.remove('far');
@@ -181,3 +234,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+
+
+

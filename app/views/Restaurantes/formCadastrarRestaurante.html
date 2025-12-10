@@ -1,4 +1,3 @@
-
 #{extends 'main.html' /}
 #{set title: rest?.id ? 'Editar Restaurante' : 'Cadastrar Restaurante' /}
 
@@ -14,23 +13,27 @@
 
         <!-- Bloco de Erros Gerais -->
         #{ifErrors}
-        <div class="alert alert-danger" style="text-align: left; margin-bottom: 25px;">
+        <div class="alert alert-danger" style="text-align: left; margin-bottom: 25px; padding: 15px; border-radius: 8px;">
             <strong>Por favor, corrija os erros abaixo:</strong>
-            <ul>
+            <ul style="margin-top: 10px; margin-bottom: 0;">
                 #{errors}<li>${error}</li>#{/errors}
             </ul>
         </div>
         #{/ifErrors}
 
-        <form action="@{Restaurantes.salvar()}" method="post" enctype="multipart/form-data">
+        <form action="@{Restaurantes.salvar()}" method="post" enctype="multipart/form-data" id="formRestaurante">
             #{if rest?.id}
             <input type="hidden" name="rest.id" value="${rest.id}">
             #{/if}
+            
+            <!-- CAMPOS OCULTOS DE GPS -->
+            <input type="hidden" id="latitude" name="rest.latitude" value="${rest?.latitude}">
+            <input type="hidden" id="longitude" name="rest.longitude" value="${rest?.longitude}">
 
             #{field 'rest.nomeDoRestaurante'}
             <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
                 <label for="${field.id}">Nome do Restaurante</label>
-                <input type="text" id="${field.id}" name="${field.name}" value="${rest?.nomeDoRestaurante ?: ''}" class="form-control">
+                <input type="text" id="${field.id}" name="${field.name}" value="${rest?.nomeDoRestaurante ?: ''}" class="form-control" required>
                 #{ifError field.name}<span class="error">${field.error}</span>#{/ifError}
             </div>
             #{/field}
@@ -38,7 +41,36 @@
             #{field 'rest.CNPJ'}
             <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
                 <label for="${field.id}">CNPJ</label>
-                <input type="text" id="${field.id}" name="${field.name}" value="${rest?.CNPJ ?: ''}" class="form-control">
+                <input type="text" id="${field.id}" name="${field.name}" value="${rest?.CNPJ ?: ''}" class="form-control" required>
+                #{ifError field.name}<span class="error">${field.error}</span>#{/ifError}
+            </div>
+            #{/field}
+
+            <!-- CAMPO DE ENDEREÇO COM LAYOUT CORRIGIDO (FLEXBOX) -->
+            #{field 'rest.endereco'}
+            <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                <label for="enderecoInput">Endereço Completo</label>
+                
+                <!-- Container Flex para Input + Botão ficarem na mesma linha -->
+                <div class="input-group" style="display: flex; gap: 10px;">
+                    <input type="text" id="enderecoInput" name="${field.name}" 
+                           value="${rest?.endereco ?: ''}" class="form-control" 
+                           placeholder="Ex: Av. Paulista, 1000, São Paulo" required style="flex: 1;">
+                           
+                    <button type="button" class="btn btn-info" onclick="buscarCoordenadas()" 
+                            style="background-color: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; white-space: nowrap;">
+                        <i class="fas fa-map-marker-alt"></i> Validar
+                    </button>
+                </div>
+
+                <small id="statusGPS" class="form-text text-muted" style="display: block; margin-top: 8px; font-weight: 500;">
+                    #{if rest?.latitude}
+                        <span style="color: green;">✔ Localização já cadastrada</span>
+                    #{/if}
+                    #{else}
+                        <span style="color: #A34E2B;">⚠ Clique em validar para ativar o "Perto de Mim".</span>
+                    #{/else}
+                </small>
                 #{ifError field.name}<span class="error">${field.error}</span>#{/ifError}
             </div>
             #{/field}
@@ -51,53 +83,45 @@
             </div>
             #{/field}
             
-<!-- NOVO: WHATSAPP -->
-#{field 'rest.whatsapp'}
-    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
-        <label for="${field.id}">WhatsApp (Somente números):</label>
-        <input type="text" id="${field.id}" name="${field.name}" class="form-control" value="${field.value ?: rest?.whatsapp}" placeholder="Ex: 11999999999">
-        <span class="form-hint">Digite o DDD + Número (sem traços ou espaços).</span>
-        <span class="form-hint">#{error field.name /}</span>
-    </div>
-#{/field}
+            #{field 'rest.whatsapp'}
+            <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                <label for="${field.id}">WhatsApp (Somente números):</label>
+                <input type="text" id="${field.id}" name="${field.name}" class="form-control" value="${field.value ?: rest?.whatsapp}" placeholder="Ex: 11999999999">
+                <span class="form-hint" style="font-size: 0.85em; color: #666;">Digite apenas números com DDD.</span>
+            </div>
+            #{/field}
 
-<!-- NOVO: LINK DA PÁGINA -->
-#{field 'rest.linkPagina'}
-    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
-        <label for="${field.id}">Link da Página / Instagram (Opcional):</label>
-        <input type="text" id="${field.id}" name="${field.name}" class="form-control" value="${field.value ?: rest?.linkPagina}" placeholder="Ex: https://instagram.com/seurestaurante">
-        <span class="form-hint">Cole o link completo (começando com http:// ou https://).</span>
-        <span class="form-hint">#{error field.name /}</span>
-    </div>
-#{/field}
+            #{field 'rest.linkPagina'}
+            <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                <label for="${field.id}">Link da Página (Instagram/Site):</label>
+                <input type="text" id="${field.id}" name="${field.name}" class="form-control" value="${field.value ?: rest?.linkPagina}" placeholder="Ex: https://instagram.com/seu_restaurante">
+            </div>
+            #{/field}
 
             #{field 'foto'}
             <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
-                <label for="${field.id}">Foto do Restaurante</label>
-                <input type="file" id="${field.id}" name="${field.name}" class="form-control-file">
-                <span class="form-hint">Envie uma imagem (JPG, PNG).</span>
+                <label for="imagem">Foto do Restaurante</label>
+                <input type="file" id="imagem" name="${field.name}" class="form-control-file" style="padding: 10px 0;">
+                
+                <!-- Preview Container -->
+                <div id="previewContainer" style="margin-top: 15px; text-align: center;">
+                    #{if rest?.id && rest.temFoto()}
+                        <p style="margin-bottom: 5px; font-size: 0.9em; color: #666;">Imagem Atual:</p>
+                        <img src="/uploads/${rest.id}/${rest.fotos[0].nome}" id="previewImagem" 
+                             alt="Imagem atual" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 1px solid #ddd;">
+                    #{/if}
+                </div>
+                
                 #{ifError field.name}<span class="error">${field.error}</span>#{/ifError}
             </div>
             #{/field}
-            
-            <!-- Exibição da foto atual -->
-            #{if rest?.id && rest.temFoto()}
-            <div class="form-group">
-                <label>Imagem Atual</label>
-                <div style="margin-top: 10px;">
-                    <img src="/uploads/${rest.id}/${rest.fotos[0].nome}" alt="Imagem atual" style="max-width: 200px; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                </div>
-            </div>
-            #{/if}
 
-            <div class="form-actions" style="margin-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 15px;">
-                <!-- Botão de Salvar -->
-                <button type="submit" class="action-btn">
-                    <i class="fas fa-save"></i> ${rest?.id ? 'Atualizar' : 'Salvar'} Restaurante
+            <div class="form-actions" style="margin-top: 30px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                <button type="submit" class="action-btn" style="width: 100%; max-width: 300px;">
+                    <i class="fas fa-save"></i> ${rest?.id ? 'Atualizar' : 'Salvar'}
                 </button>
                 
-                <!-- Botão Cancelar com o layout correto -->
-                <a href="@{Gerenciamentos.principal()}" class="action-btn" style="background-color: #6c757d; text-align: center;">
+                <a href="@{Gerenciamentos.principal()}" class="action-btn" style="background-color: #6c757d; text-align: center; width: 100%; max-width: 300px; text-decoration: none;">
                     <i class="fas fa-times"></i> Cancelar
                 </a>
             </div>
@@ -106,41 +130,62 @@
 </main>
 </body>
 
-
-
 <script>
-    // Validação do Bootstrap
-    (function() {
-        'use strict';
-        window.addEventListener('load', function() {
-            var forms = document.querySelectorAll('.needs-validation');
-            Array.prototype.slice.call(forms).forEach(function(form) {
-                form.addEventListener('submit', function(event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        }, false);
-    })();
+    // --- FUNÇÃO DE GEOLOCALIZAÇÃO ---
+    function buscarCoordenadas() {
+        var endereco = document.getElementById('enderecoInput').value;
+        var statusSpan = document.getElementById('statusGPS');
+        
+        if(!endereco) {
+            alert("Digite um endereço primeiro para validar!");
+            return;
+        }
 
-    // Preview de imagem antes de enviar
+        statusSpan.innerHTML = "<span style='color: blue;'>⏳ Buscando localização...</span>";
+
+        fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(endereco))
+        .then(response => response.json())
+        .then(data => {
+            if(data.length > 0) {
+                var local = data[0];
+                document.getElementById('latitude').value = local.lat;
+                document.getElementById('longitude').value = local.lon;
+                statusSpan.innerHTML = "<span style='color: green;'>✔ Endereço Confirmado!</span>";
+            } else {
+                statusSpan.innerHTML = "<span style='color: red;'>❌ Endereço não encontrado. Tente ser mais específico (Rua, Número, Cidade).</span>";
+                document.getElementById('latitude').value = "";
+                document.getElementById('longitude').value = "";
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            statusSpan.innerHTML = "<span style='color: red;'>Erro ao conectar com o mapa.</span>";
+        });
+    }
+
+    // --- PREVIEW DE IMAGEM ---
     document.getElementById('imagem').addEventListener('change', function(e) {
         var file = e.target.files[0];
         if (file) {
             var reader = new FileReader();
             reader.onload = function(event) {
-                var img = document.createElement('img');
-                img.src = event.target.result;
-                img.className = 'img-fluid mt-2';
-                img.style.maxWidth = '200px';
-                img.style.borderRadius = '8px';
+                var container = document.getElementById('previewContainer');
+                
+                // Remove preview antigo se houver
                 var oldPreview = document.getElementById('previewImagem');
                 if (oldPreview) oldPreview.remove();
+                
+                // Cria nova imagem
+                var img = document.createElement('img');
+                img.src = event.target.result;
                 img.id = 'previewImagem';
-                document.getElementById('imagem').parentElement.appendChild(img);
+                img.style.maxWidth = '100%';
+                img.style.maxHeight = '200px';
+                img.style.borderRadius = '8px';
+                img.style.border = '1px solid #ddd';
+                img.style.marginTop = '10px';
+                
+                container.appendChild(img);
             };
             reader.readAsDataURL(file);
         }

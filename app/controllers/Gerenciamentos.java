@@ -1,10 +1,12 @@
 package controllers;
 
 import java.util.List;
+import java.util.Collections; // Necessário para sort
+import java.util.Comparator;  // Necessário para sort
 import models.Cliente;
 import models.Restaurante;
 import models.Status;
-import models.Perfil; // <-- NOVO IMPORT
+import models.Perfil; 
 import play.mvc.Controller;
 import play.mvc.With;
 import play.data.validation.Valid;
@@ -12,19 +14,9 @@ import play.data.validation.Valid;
 @With(Seguranca.class)
 public class Gerenciamentos extends Controller {
 
-    /**
-     * MODIFICADO: Método principal simplificado e corrigido.
-     * Usa Seguranca.getClienteConectado() para evitar código duplicado
-     * e passa a variável com o nome correto para a view.
-     */
     public static void principal() {
-        // 1. Busca o cliente usando o método centralizado da classe Seguranca
         Cliente clienteConectado = Seguranca.getClienteConectado();
-
-        // 2. Busca os restaurantes ativos
         List<Restaurante> restaurantes = models.Restaurante.find("status = ?1", models.Status.ATIVO).fetch();
-
-        // 3. Renderiza passando 'clienteConectado' (nome esperado pelo seu HTML)
         render(restaurantes, clienteConectado);
     }
 
@@ -130,17 +122,14 @@ public class Gerenciamentos extends Controller {
         listar(null);
     }
 
-    
-    // NOVO: cadastro PROPRIETÁRIO
+    // --- CADASTRO DE PROPRIETÁRIO ---
 
-     public static void formCadastroProprietario() {
+    public static void formCadastroProprietario() {
         Cliente cli = new Cliente();
         renderTemplate("Gerenciamentos/formCadastroProprietario.html", cli);
     }
- // ALTERAÇÃO: Auto-login após cadastro de proprietário
-    public static void salvarProprietario(Cliente cli, String senha) {
 
-        // Validação básica de senha
+    public static void salvarProprietario(Cliente cli, String senha) {
         if (senha != null && !senha.trim().isEmpty()) {
             cli.setSenha(senha);
         } else {
@@ -151,18 +140,59 @@ public class Gerenciamentos extends Controller {
         }
 
         cli.status = Status.ATIVO;
-        cli.perfil = Perfil.PROPRIETARIO; // perfil fixo
+        cli.perfil = Perfil.PROPRIETARIO;
         cli.save();
 
-        // 1. Coloca o ID na sessão (LOGIN AUTOMÁTICO)
         session.put("clienteId", cli.id);
-
-        // 2. Mensagem de boas-vindas
         flash.success("Bem-vindo(a), %s! Seu cadastro de proprietário foi realizado.", cli.nome);
-        
-        // 3. Redireciona para a página principal (já logado)
         principal();
+    }
+
+    // --- GEOLOCALIZAÇÃO E ORDENAÇÃO (NOVO) ---
     
+    // Método chamado pelo botão "Perto de Mim"
+    public static void listarPorDistancia(final Double lat, final Double lon) {
+        Cliente clienteConectado = Seguranca.getClienteConectado();
+        
+        // 1. Pega todos os restaurantes ativos
+        List<Restaurante> restaurantes = Restaurante.find("status = ?1", Status.ATIVO).fetch();
+
+        // 2. Se o cliente enviou o GPS, ordena a lista
+        if (lat != null && lon != null) {
+            Collections.sort(restaurantes, new Comparator<Restaurante>() {
+                public int compare(Restaurante r1, Restaurante r2) {
+                    // Joga pro final quem não tem GPS cadastrado
+                    if(r1.latitude == null) return 1; 
+                    if(r2.latitude == null) return -1;
+
+                    // Calcula distâncias
+                    double dist1 = calcularHaversine(lat, lon, r1.latitude, r1.longitude);
+                    double dist2 = calcularHaversine(lat, lon, r2.latitude, r2.longitude);
+                    
+                    // Ordena do menor para o maior (mais perto primeiro)
+                    return Double.compare(dist1, dist2);
+                }
+            });
+            // REMOVIDO: flash.success("Restaurantes ordenados por proximidade!");
+        } else {
+            flash.error("Não foi possível obter sua localização.");
+        }
+
+        // 3. Renderiza a tela principal com a lista já ordenada
+        render("Gerenciamentos/principal.html", restaurantes, clienteConectado);
+    }
+
+    // Fórmula matemática para calcular distância em KM
+    private static double calcularHaversine(double lat1, double lon1, double lat2, double lon2) {
+        final int R = 6371; // Raio da Terra em KM
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
 }
-}
-    // COM VALIDAÇÃO COMPLETA E AUTO-LOGIN
+
+
