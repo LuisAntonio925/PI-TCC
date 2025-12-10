@@ -1,0 +1,143 @@
+#{extends 'main.html' /}
+#{set title: cli?.id ? 'Editar Cliente' : 'Cadastrar Cliente' /}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+</head>
+<body class="list-page">
+    <header class="header list-header">
+        <h1>Cadastro do usuario</h1>
+        <p class="slogan">Preencha os dados abaixo para cadastrar ou editar o usuário.</p>
+    </header>
+
+    <div class="separator list-separator"></div>
+
+    <main class="list-main">
+        <div class="form-card">
+            <h2>Dados do Cliente</h2>
+
+            #{ifErrors}
+                <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: left;">
+                    <p>Por favor, corrija os erros abaixo:</p>
+                    <ul>
+                    #{errors}
+                        <li>${error}</li>
+                    #{/errors}
+                    </ul>
+                </div>
+            #{/ifErrors}
+
+            <!-- NOVO: enctype para upload -->
+            <form action="@{Gerenciamentos.salvar()}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="cli.id" value="${cli?.id}">
+
+                #{field 'cli.nome'}
+                    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                        <label for="${field.id}">Nome Completo:</label>
+                        <input type="text" id="${field.id}" name="${field.name}" value="${field.value ?: cli?.nome}">
+                        #{error field.name /}
+                    </div>
+                #{/field}
+
+                #{field 'cli.telefone'}
+                    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                        <label for="${field.id}">Telefone:</label>
+                        <input type="text" id="${field.id}" name="${field.name}" value="${field.value ?: cli?.telefone}">
+                        #{error field.name /}
+                    </div>
+                #{/field}
+
+                #{field 'cli.email'}
+                    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                        <label for="${field.id}">Email:</label>
+                        <input type="email" id="${field.id}" name="${field.name}" value="${field.value ?: cli?.email}">
+                        #{error field.name /}
+                    </div>
+                #{/field}
+
+                #{field 'senha'}
+                    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                        <label for="${field.id}">Senha:</label>
+                        <input type="password" id="${field.id}" name="${field.name}" value="">
+                        #{if cli?.id}
+                            <small class="form-hint">Deixe em branco para não alterar a senha.</small>
+                        #{/if}
+                        #{error field.name /}
+                    </div>
+                #{/field}
+
+                <!-- NOVO: Foto de perfil -->
+                <div class="form-group">
+                    <label for="foto">Foto de Perfil:</label>
+                    <input type="file" id="foto" name="foto" class="form-control-file" accept="image/*">
+                    <span class="form-hint">Envie uma imagem JPG ou PNG.</span>
+                </div>
+
+                #{if cli?.id && cli.temFoto()}
+                <div class="form-group">
+                    <label>Foto atual:</label>
+                    <div>
+                        <img src="/uploads/clientes/${cli.id}/${cli.nomeFoto}"
+                             alt="Foto de ${cli.nome}"
+                             style="max-width: 150px; border-radius: 50%; border: 1px solid #ddd;">
+                    </div>
+                </div>
+                #{/if}
+
+                #{if restaurantesDisponiveis}
+                    <hr class="form-separator" style="margin: 20px 0;">
+                    <h3>Vincular restaurante #{if cli?.id}(Adicionar Novo)#{/if}#{else}(Opcional)#{/else}</h3>
+                    #{field 'idRestaurante'}
+                        <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                            <label for="${field.id}">Selecione um restaurante:</label>
+                            <select name="${field.name}" id="${field.id}" class="form-select">
+                                <option value="">Selecione...</option>
+                                #{list items:restaurantesDisponiveis, as:'rest'}
+                                    <option value="${rest.id}" ${field.value == rest.id ? 'selected' : ''}>${rest.nomeDoRestaurante}</option>
+                                #{/list}
+                            </select>
+                            #{error field.name /}
+                        </div>
+                    #{/field}
+                #{/if}
+
+                <button type="submit">
+                    #{if cli?.id} Salvar Alterações
+                    #{/if} #{else} Cadastrar
+                    #{/else}
+                </button>
+            </form>
+        </div>
+
+        #{if cli?.id}
+            <hr class="form-separator">
+            <div class="form-card form-card-secondary">
+                <h3>Restaurantes Vinculados</h3>
+                #{if cli.restaurantes.isEmpty()}
+                    <p>Nenhum restaurante vinculado.</p>
+                #{/if}
+                #{else}
+                    <table class="linked-items-table">
+                        #{list items:cli.restaurantes, as:'rVinculado'}
+                            <tr class="linked-item-row">
+                                <td class="linked-item-name">${rVinculado.nomeDoRestaurante}</td>
+                                <td class="linked-item-actions">
+                                    <a href="@{Gerenciamentos.removerRestaurante(idCli:cli.id, idRest:rVinculado.id)}" class="remove-link" onclick="return confirm('Tem certeza que deseja desvincular este restaurante?');">
+                                        <i class="fas fa-times-circle"></i> Desvincular
+                                    </a>
+                                </td>
+                            </tr>
+                        #{/list}
+                    </table>
+                #{/else}
+            </div>
+        #{/if}
+
+        <div class="navigation-buttons">
+            <a href="@{Gerenciamentos.listar(null)}" class="action-btn">Voltar para Lista</a>
+            <a href="@{Gerenciamentos.principal()}" class="action-btn">Ir para Início</a>
+        </div>
+    </main>
+</body>
+</html>

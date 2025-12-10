@@ -1,0 +1,183 @@
+#{extends 'main.html' /}
+#{set title:'Principal' /}
+
+<header class="header-content"> 
+    <div class="nav-padding">
+        <nav class="ifood-nav">
+            <a href="@{Gerenciamentos.ListasDeGerenciamentos()}" class="app-logo">RestApp</a>
+            <div class="search-bar"></div> 
+            <div class="action-icons">
+                <a href="@{Gerenciamentos.principal()}" class="functions-btn">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Início</span>
+                </a>
+                <a href="@{Favoritos.index()}" title="Lista de Restaurantes">
+                    <i class="fa-solid fa-store-alt"></i>
+                </a>
+                
+                <div class="user-container" id="userContainer">
+                    <a href="#" class="user-icon" onclick="toggleUserDropdown(event)">
+                        <i class="fa-solid fa-user"></i>
+                    </a>
+                    <div class="user-dropdown">
+                        #{if clienteConectado} 
+                            <span class="dropdown-user-name">Olá, ${clienteConectado.nome}</span> 
+                        #{/if}
+
+                        <a href="@{ClientesPerfil.perfil()}">Perfil</a>
+                        
+                        <!-- ALTERAÇÃO AQUI: Configurações apenas para ADMINISTRADOR -->
+                        #{if clienteConectado?.perfil == models.Perfil.ADMINISTRADOR}
+                            <a href="@{Gerenciamentos.ListasDeGerenciamentos()}">Configurações</a>
+                        #{/if}
+
+                        <!-- Meus Restaurantes só para PROPRIETÁRIO -->
+                        #{if clienteConectado?.perfil == models.Perfil.PROPRIETARIO}
+                            <a href="@{RestaurantesPerfil.restaurantes()}" >
+                                Meus Restaurantes
+                            </a>
+                        #{/if}
+
+                        <a href="@{Logins.logout()}">Sair</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div>
+        <h1>Os Melhores Sabores da Cidade</h1>
+        <p class="slogan">Descubra restaurantes por categoria e encontre o seu próximo prato favorito.</p>
+    </div>
+
+    <div class="separator"></div>
+    
+    <div class="categoria-restaurantes">
+        <h2><i class="fas fa-store"></i> Todos os Restaurantes</h2>
+        
+        <div class="lista-de-cards">
+            
+            #{list items:restaurantes, as:'rest'}
+            <div class="restaurante-card">
+                <div class="foto-container">
+                    #{if rest.temFoto()}
+                        <img src="/uploads/${rest.id}/${rest.fotos[0].nome}" alt="${rest.nomeDoRestaurante}">
+                    #{/if}
+                    #{else}
+                        <img src="https://via.placeholder.com/400x160/A34E2B/FFFFFF?text=${rest.nomeDoRestaurante?.replaceAll(' ', '+') ?: 'Restaurante'}" alt="${rest.nomeDoRestaurante}">
+                    #{/else}
+                </div>
+                
+                <div class="info-e-acoes">
+                    <h3 class="nome-restaurante">${rest.nomeDoRestaurante}</h3>
+                    
+                    <span class="categoria"><i class="fas fa-tag"></i> ${rest.categoria}</span>
+
+                    #{if rest.whatsapp}
+                        <span class="categoria" style="margin-top: -10px; display: block;">
+                            <i class="fab fa-whatsapp" style="color: #25D366; font-size: 1.1em; margin-right: 5px;"></i> 
+                            <a href="https://wa.me/55${rest.whatsapp}" target="_blank" style="color: #888; text-decoration: none; font-size: 0.9em;">
+                                ${rest.whatsapp}
+                            </a>
+                        </span>
+                    #{/if}
+                    
+                    <div class="botoes-acao">
+                        
+                        #{if rest.linkPagina}
+                            <a href="${rest.linkPagina}" target="_blank" class="btn-acessar">
+                                Acessar <i class="fas fa-external-link-alt" style="font-size: 0.8em; margin-left: 5px;"></i>
+                            </a>
+                        #{/if}
+                        
+                        #{if clienteConectado}
+                        <a href="javascript:void(0);"
+                           class="btn-favoritar ${clienteConectado.restaurantes.contains(rest) ? 'favorito' : ''}"
+                           data-rest-id="${rest.id}"
+                           style="margin-left: auto;">
+                            <i class="${clienteConectado.restaurantes.contains(rest) ? 'fas fa-star' : 'far fa-star'}"></i>
+                        </a>
+                        #{/if}
+                        #{else}
+                        <button class="btn-favoritar" title="Faça login para favoritar" disabled style="margin-left: auto;">
+                            <i class="far fa-star"></i>
+                        </button>
+                        #{/else}
+
+                    </div>
+                </div>
+            </div>
+            #{/list}
+            
+            #{if restaurantes.isEmpty()}
+                <p style="grid-column: 1 / -1; text-align: center;">Nenhum restaurante ativo encontrado.</p>
+            #{/if}
+            
+        </div>
+    </div>
+
+    <div class="card-cadastro">
+        <p>Seu restaurante não está aqui? Cadastre-se agora!</p>
+
+        #{if clienteConectado && (clienteConectado.perfil == models.Perfil.ADMINISTRADOR || clienteConectado.perfil == models.Perfil.PROPRIETARIO)}
+            <a href="@{Restaurantes.formCadastrarRestaurante()}" class="btn-cadastrar-restaurante">
+                Cadastrar Meu Restaurante
+            </a>
+        #{/if}
+        #{else}
+            <a href="@{Gerenciamentos.formCadastroProprietario()}" class="btn-cadastrar-restaurante">
+                Quero cadastrar meu restaurante
+            </a>
+        #{/else}
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var botoesFavorito = document.querySelectorAll('.btn-favoritar[data-rest-id]');
+
+    botoesFavorito.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var idRest = this.getAttribute('data-rest-id');
+
+            fetch('@{Favoritos.favoritarAjax()}' + '?idRest=' + idRest, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function (response) {
+                if (response.status === 401) {
+                    alert('Você precisa estar logado para favoritar.');
+                    return null;
+                }
+                if (!response.ok) {
+                    throw new Error('Erro na requisição');
+                }
+                return response.json();
+            })
+            .then(function (data) {
+                if (data === null) return;
+
+                var icon = btn.querySelector('i');
+
+                if (data === true) {
+                    btn.classList.add('favorito');
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                } else {
+                    btn.classList.remove('favorito');
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                }
+            })
+            .catch(function (err) {
+                console.error(err);
+                alert('Ocorreu um erro ao favoritar/desfavoritar.');
+            });
+        });
+    });
+});
+</script>

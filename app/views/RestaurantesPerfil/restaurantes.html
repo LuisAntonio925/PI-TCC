@@ -1,0 +1,27 @@
+
+#{extends 'main.html' /}
+#{set title:'Meus Restaurantes' /}
+
+<main class="list-main">
+    <div class="form-card">
+        <h2>Meus Restaurantes</h2>
+
+        #{if restaurantes && !restaurantes.isEmpty()}
+            <ul>
+                #{list items:restaurantes, as:'r'}
+                    <li class="restaurant-item">
+                        <strong>${r.nomeDoRestaurante}</strong> - ${r.categoria}
+                        <a href="@{RestaurantesPerfil.editarRestaurante(r.id)}" class="action-btn">
+                            Editar
+                        </a>
+                    </li>
+                #{/list}
+            </ul>
+        #{/if}
+        #{else}
+            <p>Você ainda não cadastrou nenhum restaurante.</p>
+        #{/else}
+
+        <a href="@{Gerenciamentos.principal()}" class="action-btn">Voltar</a>
+    </div>
+</main>

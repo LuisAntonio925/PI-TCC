@@ -1,0 +1,28 @@
+# Routes
+# ...
+
+# Rotas do Perfil do Cliente
+GET     /cliente/perfil             ClientesPerfil.perfil
+GET     /cliente/editar             ClientesPerfil.editarPerfil
+POST    /cliente/atualizar          ClientesPerfil.atualizarPerfil
+
+# --- ADICIONE ESTAS LINHAS ---
+# Rotas de Cadastro de Cliente (Gerenciamentos)
+GET     /gerenciamentos/formcadastro    Gerenciamentos.formCadastro
+POST    /gerenciamentos/salvar          Gerenciamentos.salvar
+
+GEt     /restaurantes/salvar            Restaurantes.salvar
+POST    /restaurantes/{id}/imagem       Restaurantes.getImagem
+POST    /restaurantes/trocarStatusAjax      Restaurantes.trocarStatusAjax
+
+# --- FIM DAS LINHAS ADICIONADAS ---
+
+# Ignore favicon requests
+GET     /favicon.ico                            404
+
+# Map static resources
+GET     /public/                                staticDir:public
+GET     /uploads/                                staticDir:uploads
+
+# Catch all (DEVE SER A ÚLTIMA ROTA)
+* /{controller}/{action}                  {controller}.{action}

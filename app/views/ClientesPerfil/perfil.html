@@ -1,0 +1,26 @@
+#{extends 'main.html' /}
+#{set title:'Meu Perfil' /}
+
+<main class="list-main">
+    <div class="form-card">
+        <h2>Meu Perfil</h2>
+
+        #{if clienteLogado.temFoto()}
+            <img src="/uploads/clientes/${clienteLogado.id}/${clienteLogado.nomeFoto}"
+                 alt="Foto de ${clienteLogado.nome}"
+                 style="width:120px;height:120px;border-radius:50%;object-fit:cover;margin-bottom:15px;">
+        #{/if}
+        #{else}
+            <img src="https://via.placeholder.com/120x120/CCCCCC/FFFFFF?text=${clienteLogado.nome?.substring(0,1) ?: 'U'}"
+                 alt="Sem foto"
+                 style="width:120px;height:120px;border-radius:50%;object-fit:cover;margin-bottom:15px;">
+        #{/else}
+
+        <p><strong>Nome:</strong> ${clienteLogado.nome}</p>
+        <p><strong>Email:</strong> ${clienteLogado.email}</p>
+        <p><strong>Telefone:</strong> ${clienteLogado.telefone}</p>
+
+        <a href="@{ClientesPerfil.editarPerfil()}" class="action-btn">Editar Perfil</a>
+        <a href="@{Gerenciamentos.principal()}" class="action-btn">Voltar</a>
+    </div>
+</main>

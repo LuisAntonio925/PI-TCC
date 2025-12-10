@@ -1,0 +1,69 @@
+#{extends 'main.html' /}
+#{set title:'Lista de Clientes' /}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Clientes - RestApp</title>
+</head>
+<body class="list-page">
+    <header class="header list-header">
+        <h1>Lista de Clientes</h1>
+        <p class="slogan">Visualize, busque, edite e remova clientes cadastrados.</p>
+    </header>
+
+    <div class="separator list-separator"></div>
+
+    <main class="list-main">
+        <form action="@{Gerenciamentos.listar}" method="GET" class="search-form">
+            <label for="search_term"><i class="fas fa-search"></i> Buscar por nome ou e-mail:</label>
+            <input type="text" id="search_term" name="termo" value="${termo}" placeholder="Digite aqui...">
+            <input type="submit" value="Buscar">
+        </form>
+
+        <div class="client-list-section">
+            <h2><i class="fas fa-users"></i> Clientes Cadastrados</h2>
+            
+            <ul>
+                #{list items:listaClientes, as:'l'}
+                <li class="client-item">
+                    
+                    <div class="client-info">
+                        <span class="name">${l.nome}</span>
+                        <span class="contact"><i class="fas fa-envelope"></i> ${l.email} | <i class="fas fa-phone"></i> ${l.telefone}</span>
+                        
+                        #{if l.restaurantes.isEmpty()}
+                            <span class="contact"><i class="fas fa-utensils"></i> Nenhum restaurante vinculado</span>
+                        #{/if}
+                        #{else}
+                            <span class="contact"><i class="fas fa-utensils"></i> <b>Vinculado a:</b> ${l.restaurantes.collect{it.nomeDoRestaurante}.join(', ')}</span>
+                        #{/else}
+                    </div>
+                    <div class="client-actions">
+                        <a href="@{Gerenciamentos.editar(l.id)}" class="action-btn edit-btn">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a href="@{Gerenciamentos.remover(l.id)}" class="action-btn remove-btn" onclick="return confirm('Tem certeza que deseja remover este cliente?');">
+                            <i class="fas fa-trash-alt"></i> Remover
+                        </a>
+                    </div>
+                </li>
+                #{/list}
+            </ul>
+            
+            #{if listaClientes.isEmpty()}
+                <div class="no-clients-message">
+                    <p><i class="fas fa-exclamation-circle"></i> Cliente não encontrado!!!</p>
+                </div>
+            #{/if}
+        </div>
+
+        <a href="@{Gerenciamentos.formCadastro}" class="add-new-client-btn">
+            <i class="fas fa-plus-circle"></i> Cadastrar Novo
+        </a>
+        <a href="@{Gerenciamentos.principal}" class="add-new-restaurant-btn"> Voltar</a>
+    </main>
+</body>
+</html>

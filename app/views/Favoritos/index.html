@@ -1,0 +1,98 @@
+#{extends 'main.html' /}
+#{set title:'Meus Favoritos' /}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Favoritos - RestApp</title>
+</head>
+<body class="list-page">
+
+<header class="header list-header">
+    <h1>Restaurantes Favoritos</h1>
+    <p class="slogan">Sua lista pessoal de lugares preferidos.</p>
+</header>
+
+<div class="separator list-separator"></div>
+
+<main> <!-- Removi a classe list-main para usar largura total -->
+    
+    <div class="categoria-restaurantes">
+        <h2><i class="fas fa-heart"></i> Meus Favoritos</h2>
+        
+        #{if meusFavoritos.isEmpty()}
+            <div class="no-clients-message">
+                <p>Você ainda não favoritou nenhum restaurante.</p>
+            </div>
+        #{/if}
+        #{else}
+            <!-- AQUI: Usando a mesma estrutura da principal -->
+            <div class="lista-de-cards">
+                #{list items:meusFavoritos, as:'rest'}
+                <div class="restaurante-card">
+                    <div class="foto-container">
+                        #{if rest.temFoto()}
+                            <img src="/uploads/${rest.id}/${rest.fotos[0].nome}" alt="${rest.nomeDoRestaurante}">
+                        #{/if}
+                        #{else}
+                            <img src="https://via.placeholder.com/400x160/A34E2B/FFFFFF?text=${rest.nomeDoRestaurante?.replaceAll(' ', '+') ?: 'Restaurante'}" alt="${rest.nomeDoRestaurante}">
+                        #{/else}
+                    </div>
+                    <div class="info-e-acoes">
+                        <h3 class="nome-restaurante">${rest.nomeDoRestaurante}</h3>
+                        <span class="categoria"><i class="fas fa-tag"></i> ${rest.categoria}</span>
+                        <div class="botoes-acao">
+                            <!-- Botão remover favorito -->
+                            <a href="@{Favoritos.alternarFavorito(rest.id)}" class="btn-favoritar favorito" title="Remover dos favoritos">
+                                <i class="fas fa-heart"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                #{/list}
+            </div>
+        #{/else}
+    </div>
+
+    <div class="separator" style="margin-top: 50px;"></div>
+
+    <div class="categoria-restaurantes">
+        <h2><i class="fas fa-store"></i> Descubra Novos Restaurantes</h2>
+
+        #{if outrosRestaurantes.isEmpty()}
+            <div class="no-clients-message">
+                <p>Não há outros restaurantes para favoritar no momento.</p>
+            </div>
+        #{/if}
+        #{else}
+            <div class="lista-de-cards">
+                #{list items:outrosRestaurantes, as:'rest'}
+                <div class="restaurante-card">
+                    <div class="foto-container">
+                        #{if rest.temFoto()}
+                            <img src="/uploads/${rest.id}/${rest.fotos[0].nome}" alt="${rest.nomeDoRestaurante}">
+                        #{/if}
+                        #{else}
+                            <img src="https://via.placeholder.com/400x160/A34E2B/FFFFFF?text=${rest.nomeDoRestaurante?.replaceAll(' ', '+') ?: 'Restaurante'}" alt="${rest.nomeDoRestaurante}">
+                        #{/else}
+                    </div>
+                    <div class="info-e-acoes">
+                        <h3 class="nome-restaurante">${rest.nomeDoRestaurante}</h3>
+                        <span class="categoria"><i class="fas fa-tag"></i> ${rest.categoria}</span>
+                        <div class="botoes-acao">
+                            <!-- Botão adicionar favorito -->
+                            <a href="@{Favoritos.alternarFavorito(rest.id)}" class="btn-favoritar" title="Adicionar aos favoritos">
+                                <i class="far fa-heart"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                #{/list}
+            </div>
+        #{/else}
+    </div>
+</main>
+</body>
+</html>

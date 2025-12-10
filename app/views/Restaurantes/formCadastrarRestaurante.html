@@ -1,0 +1,148 @@
+
+#{extends 'main.html' /}
+#{set title: rest?.id ? 'Editar Restaurante' : 'Cadastrar Restaurante' /}
+
+<body class="list-page">
+
+<header class="header list-header">
+    <h1>${rest?.id ? 'Editar Restaurante' : 'Cadastrar Restaurante'}</h1>
+    <p class="slogan">Preencha os dados abaixo para gerenciar seu estabelecimento.</p>
+</header>
+
+<main class="list-main">
+    <div class="form-card">
+
+        <!-- Bloco de Erros Gerais -->
+        #{ifErrors}
+        <div class="alert alert-danger" style="text-align: left; margin-bottom: 25px;">
+            <strong>Por favor, corrija os erros abaixo:</strong>
+            <ul>
+                #{errors}<li>${error}</li>#{/errors}
+            </ul>
+        </div>
+        #{/ifErrors}
+
+        <form action="@{Restaurantes.salvar()}" method="post" enctype="multipart/form-data">
+            #{if rest?.id}
+            <input type="hidden" name="rest.id" value="${rest.id}">
+            #{/if}
+
+            #{field 'rest.nomeDoRestaurante'}
+            <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                <label for="${field.id}">Nome do Restaurante</label>
+                <input type="text" id="${field.id}" name="${field.name}" value="${rest?.nomeDoRestaurante ?: ''}" class="form-control">
+                #{ifError field.name}<span class="error">${field.error}</span>#{/ifError}
+            </div>
+            #{/field}
+
+            #{field 'rest.CNPJ'}
+            <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                <label for="${field.id}">CNPJ</label>
+                <input type="text" id="${field.id}" name="${field.name}" value="${rest?.CNPJ ?: ''}" class="form-control">
+                #{ifError field.name}<span class="error">${field.error}</span>#{/ifError}
+            </div>
+            #{/field}
+
+            #{field 'rest.categoria'}
+            <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                <label for="${field.id}">Categoria</label>
+                <input type="text" id="${field.id}" name="${field.name}" value="${rest?.categoria ?: ''}" class="form-control">
+                #{ifError field.name}<span class="error">${field.error}</span>#{/ifError}
+            </div>
+            #{/field}
+            
+<!-- NOVO: WHATSAPP -->
+#{field 'rest.whatsapp'}
+    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+        <label for="${field.id}">WhatsApp (Somente números):</label>
+        <input type="text" id="${field.id}" name="${field.name}" class="form-control" value="${field.value ?: rest?.whatsapp}" placeholder="Ex: 11999999999">
+        <span class="form-hint">Digite o DDD + Número (sem traços ou espaços).</span>
+        <span class="form-hint">#{error field.name /}</span>
+    </div>
+#{/field}
+
+<!-- NOVO: LINK DA PÁGINA -->
+#{field 'rest.linkPagina'}
+    <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+        <label for="${field.id}">Link da Página / Instagram (Opcional):</label>
+        <input type="text" id="${field.id}" name="${field.name}" class="form-control" value="${field.value ?: rest?.linkPagina}" placeholder="Ex: https://instagram.com/seurestaurante">
+        <span class="form-hint">Cole o link completo (começando com http:// ou https://).</span>
+        <span class="form-hint">#{error field.name /}</span>
+    </div>
+#{/field}
+
+            #{field 'foto'}
+            <div class="form-group ${field.hasErrors ? 'hasError' : ''}">
+                <label for="${field.id}">Foto do Restaurante</label>
+                <input type="file" id="${field.id}" name="${field.name}" class="form-control-file">
+                <span class="form-hint">Envie uma imagem (JPG, PNG).</span>
+                #{ifError field.name}<span class="error">${field.error}</span>#{/ifError}
+            </div>
+            #{/field}
+            
+            <!-- Exibição da foto atual -->
+            #{if rest?.id && rest.temFoto()}
+            <div class="form-group">
+                <label>Imagem Atual</label>
+                <div style="margin-top: 10px;">
+                    <img src="/uploads/${rest.id}/${rest.fotos[0].nome}" alt="Imagem atual" style="max-width: 200px; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                </div>
+            </div>
+            #{/if}
+
+            <div class="form-actions" style="margin-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                <!-- Botão de Salvar -->
+                <button type="submit" class="action-btn">
+                    <i class="fas fa-save"></i> ${rest?.id ? 'Atualizar' : 'Salvar'} Restaurante
+                </button>
+                
+                <!-- Botão Cancelar com o layout correto -->
+                <a href="@{Gerenciamentos.principal()}" class="action-btn" style="background-color: #6c757d; text-align: center;">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+
+
+
+<script>
+    // Validação do Bootstrap
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+
+    // Preview de imagem antes de enviar
+    document.getElementById('imagem').addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(event) {
+                var img = document.createElement('img');
+                img.src = event.target.result;
+                img.className = 'img-fluid mt-2';
+                img.style.maxWidth = '200px';
+                img.style.borderRadius = '8px';
+                var oldPreview = document.getElementById('previewImagem');
+                if (oldPreview) oldPreview.remove();
+                img.id = 'previewImagem';
+                document.getElementById('imagem').parentElement.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
