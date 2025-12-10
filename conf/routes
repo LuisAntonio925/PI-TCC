@@ -11,18 +11,22 @@ POST    /cliente/atualizar          ClientesPerfil.atualizarPerfil
 GET     /gerenciamentos/formcadastro    Gerenciamentos.formCadastro
 POST    /gerenciamentos/salvar          Gerenciamentos.salvar
 
-GEt     /restaurantes/salvar            Restaurantes.salvar
+# Nova Rota para Geolocalização (Perto de Mim)
+GET     /proximos                       Gerenciamentos.listarPorDistancia
+
+# Outras Rotas de Restaurante
+GET     /restaurantes/salvar            Restaurantes.salvar
 POST    /restaurantes/{id}/imagem       Restaurantes.getImagem
-POST    /restaurantes/trocarStatusAjax      Restaurantes.trocarStatusAjax
+POST    /restaurantes/trocarStatusAjax  Restaurantes.trocarStatusAjax
 
 # --- FIM DAS LINHAS ADICIONADAS ---
 
 # Ignore favicon requests
-GET     /favicon.ico                            404
+GET     /favicon.ico                    404
 
 # Map static resources
-GET     /public/                                staticDir:public
-GET     /uploads/                                staticDir:uploads
+GET     /public/                        staticDir:public
+GET     /uploads/                       staticDir:uploads
 
 # Catch all (DEVE SER A ÚLTIMA ROTA)
-* /{controller}/{action}                  {controller}.{action}
+*       /{controller}/{action}          {controller}.{action}

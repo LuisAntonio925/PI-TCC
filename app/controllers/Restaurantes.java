@@ -200,3 +200,4 @@ public class Restaurantes extends Controller {
         renderJSON(resp);
     }
 }
+    

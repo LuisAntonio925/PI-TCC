@@ -162,6 +162,7 @@ public class Gerenciamentos extends Controller {
         
         // 3. Redireciona para a página principal (já logado)
         principal();
-    }
+    
+}
 }
     // COM VALIDAÇÃO COMPLETA E AUTO-LOGIN

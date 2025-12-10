@@ -86,4 +86,3 @@ public class Favoritos extends Controller {
         renderJSON(agoraEhFavorito);
     }
 }
-
